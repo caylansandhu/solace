@@ -201,7 +201,7 @@ body:not(.compact){--gap:20px}
   border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background var(--ease);
   min-width:50px;
 }
-.toggle.on{background:#6ee7b7}
+.toggle.on{background:var(--accent)}
 .toggle::after{
   content:"";position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;
   top:3px;left:3px;transition:transform var(--ease);
@@ -583,7 +583,7 @@ body.light .notes-tb-btn{color:#555}
   display:inline-flex;align-items:center;gap:4px;
 }
 .tts-btn:hover{border-color:var(--accent);color:var(--accent)}
-.tts-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(167,139,250,0.1)}
+.tts-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-soft, rgba(167,139,250,0.1))}
 
 /* App Locked State */
 .app-locked .app-shell,
@@ -631,32 +631,40 @@ body.light .notes-tb-btn{color:#555}
 }
 .lock-screen.unlocked{opacity:0;visibility:hidden;pointer-events:none}
 
-.lock-app-name{
+.lock-hello{
   position:absolute;
-  top:56px;
-  left:0;
-  right:0;
-  text-align:center;
+  top:calc(72px + env(safe-area-inset-top,0px));
+  left:0;right:0;text-align:center;z-index:2;pointer-events:none;
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif;
-  font-size:32px;
-  font-weight:600;
-  color:rgba(255,255,255,0.9);
-  letter-spacing:-0.3px;
-  z-index:2;
-  pointer-events:none;
+  font-size:22px;font-weight:500;color:rgba(255,255,255,0.75);
+  letter-spacing:-0.2px;
 }
-.lock-subtitle{
-  position:absolute;
-  top:96px;
-  left:0;
-  right:0;
-  text-align:center;
-  font-size:13px;
-  color:rgba(255,255,255,0.25);
-  letter-spacing:0.4px;
-  z-index:2;
-  pointer-events:none;
+.lock-center{
+  position:relative;z-index:2;display:flex;flex-direction:column;
+  align-items:center;gap:36px;padding:0 24px;
 }
+.lock-app-name{
+  font-family:"Playfair Display",-apple-system,serif;
+  font-size:56px;font-weight:700;color:#fff;letter-spacing:-0.02em;
+  text-align:center;line-height:1;
+  text-shadow:0 4px 40px rgba(255,255,255,0.08);
+}
+.lock-unlock-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 28px;background:var(--accent,#a78bfa);color:#050506;
+  border:none;border-radius:100px;font-size:15px;font-weight:600;
+  cursor:pointer;font-family:inherit;letter-spacing:0.01em;
+  box-shadow:0 8px 32px var(--accent-glow,rgba(167,139,250,0.3));
+  transition:transform 0.2s ease,box-shadow 0.2s ease;
+  min-height:52px;
+}
+.lock-unlock-btn:hover{transform:translateY(-1px)}
+.lock-unlock-btn:active{transform:translateY(0) scale(0.98)}
+.lock-error{
+  min-height:20px;font-size:13px;color:#ff8080;text-align:center;
+  opacity:0;transition:opacity 0.2s ease;
+}
+.lock-error.show{opacity:1}
 
 .lock-panel{
   position:relative;
@@ -1181,8 +1189,8 @@ body.light .notes-tb-btn{color:#555}
   transform:scale(0.95);
 }
 .command-mic.active{
-  background:rgba(167,139,250,0.2);
-  border-color:rgba(167,139,250,0.4);
+  background:var(--accent-soft, rgba(167,139,250,0.2));
+  border-color:var(--accent-30, rgba(167,139,250,0.4));
   color:var(--accent);
 }
 .command-feed{
@@ -1219,9 +1227,9 @@ body.light .notes-tb-btn{color:#555}
 
 /* ============ TRAINING TAB ============ */
 .training-root{
-  --tr-accent:#5eead4;
-  --tr-accent-soft:rgba(94,234,212,0.14);
-  --tr-accent-glow:rgba(94,234,212,0.35);
+  --tr-accent:var(--accent, #5eead4);
+  --tr-accent-soft:var(--accent-soft, rgba(94,234,212,0.14));
+  --tr-accent-glow:var(--accent-glow, rgba(94,234,212,0.35));
   --tr-surface:#0f1012;
   --tr-surface-2:#141518;
   --tr-surface-3:#17191d;
@@ -1239,7 +1247,7 @@ body.light .notes-tb-btn{color:#555}
 .training-root::before{
   content:"";position:absolute;top:-20px;left:50%;transform:translateX(-50%);
   width:520px;height:520px;border-radius:50%;
-  background:radial-gradient(circle,rgba(94,234,212,0.10) 0%,rgba(94,234,212,0.03) 40%,transparent 70%);
+  background:radial-gradient(circle,var(--accent-15,rgba(94,234,212,0.10)) 0%,var(--accent-soft) 40%,transparent 70%);
   pointer-events:none;z-index:0;filter:blur(20px);
 }
 .training-root > *{position:relative;z-index:1}
@@ -1307,13 +1315,13 @@ body.light .notes-tb-btn{color:#555}
 /* Next workout hero */
 .tr-next-hero{
   padding:28px;border-radius:24px;
-  background:linear-gradient(160deg,rgba(94,234,212,0.10) 0%,rgba(94,234,212,0.02) 45%,var(--tr-surface-2) 100%);
-  border:1px solid rgba(94,234,212,0.15);
+  background:linear-gradient(160deg,var(--accent-15,rgba(94,234,212,0.10)) 0%,var(--accent-soft) 45%,var(--tr-surface-2) 100%);
+  border:1px solid var(--accent-15,rgba(94,234,212,0.15));
   position:relative;overflow:hidden;
 }
 .tr-next-hero::after{
   content:"";position:absolute;top:-40px;right:-40px;width:200px;height:200px;
-  background:radial-gradient(circle,rgba(94,234,212,0.14) 0%,transparent 70%);
+  background:radial-gradient(circle,var(--accent-15,rgba(94,234,212,0.14)) 0%,transparent 70%);
   border-radius:50%;pointer-events:none;
 }
 .tr-next-label{font-size:11px;letter-spacing:0.14em;color:var(--tr-accent);font-weight:600;text-transform:uppercase}
@@ -1348,7 +1356,7 @@ body.light .notes-tb-btn{color:#555}
   transition:all 0.22s cubic-bezier(0.4,0,0.2,1);text-align:left;font-family:inherit;
   color:inherit;position:relative;overflow:hidden;
 }
-.tr-nav-card:hover{border-color:rgba(94,234,212,0.25);transform:translateY(-2px);background:#191b1f}
+.tr-nav-card:hover{border-color:var(--accent-30,rgba(94,234,212,0.25));transform:translateY(-2px);background:#191b1f}
 .tr-nav-card-ico{width:38px;height:38px;border-radius:12px;background:var(--tr-accent-soft);color:var(--tr-accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
 .tr-nav-card-title{font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.01em}
 .tr-nav-card-sub{font-size:12px;color:var(--tr-text-3);margin-top:4px}
@@ -1434,11 +1442,11 @@ body.light .notes-tb-btn{color:#555}
 .tr-body-map{display:flex;justify-content:center;padding:20px 0;position:relative}
 .tr-body-svg{max-width:180px;width:100%;height:auto}
 .tr-body-part{fill:var(--tr-surface-3);stroke:var(--tr-line-strong);stroke-width:1;cursor:pointer;transition:fill 0.2s ease}
-.tr-body-part.lvl-1{fill:rgba(94,234,212,0.15)}
-.tr-body-part.lvl-2{fill:rgba(94,234,212,0.3)}
-.tr-body-part.lvl-3{fill:rgba(94,234,212,0.5)}
-.tr-body-part.lvl-4{fill:rgba(94,234,212,0.7)}
-.tr-body-part.lvl-5{fill:rgba(94,234,212,0.9)}
+.tr-body-part.lvl-1{fill:var(--accent-15,rgba(94,234,212,0.15))}
+.tr-body-part.lvl-2{fill:var(--accent-30,rgba(94,234,212,0.3))}
+.tr-body-part.lvl-3{fill:var(--accent-50,rgba(94,234,212,0.5))}
+.tr-body-part.lvl-4{fill:var(--accent-70,rgba(94,234,212,0.7))}
+.tr-body-part.lvl-5{fill:var(--accent-90,rgba(94,234,212,0.9))}
 .tr-body-part:hover{stroke:var(--tr-accent);stroke-width:2}
 
 /* Calendar heatmap */
@@ -1534,7 +1542,7 @@ body.light .notes-tb-btn{color:#555}
 /* Bench hero */
 .tr-bench-hero{
   padding:32px 26px;border-radius:24px;
-  background:radial-gradient(ellipse at top right,rgba(94,234,212,0.16) 0%,transparent 55%),var(--tr-surface-2);
+  background:radial-gradient(ellipse at top right,var(--accent-15,rgba(94,234,212,0.16)) 0%,transparent 55%),var(--tr-surface-2);
   border:1px solid var(--tr-line-strong);position:relative;overflow:hidden;
 }
 .tr-bench-hero-pr{font-size:64px;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1;font-variant-numeric:tabular-nums}
@@ -1563,6 +1571,84 @@ body.light .notes-tb-btn{color:#555}
   .tr-set-head-grid{grid-template-columns:28px 1fr 1fr 36px 32px}
   .tr-nav-cards{grid-template-columns:1fr 1fr}
 }
+
+/* Split + Targets side-by-side */
+.tr-split-targets{display:grid;grid-template-columns:1.15fr 1fr;gap:12px}
+.tr-split-card, .tr-targets-card{min-width:0}
+@media (max-width:640px){
+  .tr-split-targets{grid-template-columns:1fr;gap:12px}
+}
+
+/* Split days */
+.tr-split-days{display:flex;flex-direction:column;gap:6px}
+.tr-split-day{
+  background:var(--tr-surface-3);border:1px solid var(--tr-line);border-radius:12px;
+  padding:10px 12px;cursor:pointer;transition:border-color 0.2s ease,background 0.2s ease;
+}
+.tr-split-day:hover{border-color:var(--tr-line-strong)}
+.tr-split-day.active{border-color:var(--tr-accent);background:var(--tr-accent-soft)}
+.tr-split-day-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tr-split-day-lbl{font-size:12px;font-weight:700;color:#fff;letter-spacing:0.06em}
+.tr-split-day-rest{font-size:10px;color:var(--tr-text-3);letter-spacing:0.08em;text-transform:uppercase}
+.tr-split-day-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tr-split-day-empty{font-size:11px;color:var(--tr-text-3);font-style:italic}
+.tr-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:3px 4px 3px 9px;
+  background:var(--tr-surface-2);border:1px solid var(--tr-line-strong);
+  border-radius:100px;font-size:11px;color:#fff;font-weight:600;
+}
+.tr-chip button{
+  width:18px;height:18px;border-radius:50%;border:none;background:transparent;
+  color:var(--tr-text-3);cursor:pointer;font-size:11px;padding:0;line-height:1;
+}
+.tr-chip button:hover{color:#ff8080}
+
+/* Training targets */
+.tr-target-row{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px 4px;border-bottom:1px solid var(--tr-line);
+}
+.tr-target-row:last-child{border-bottom:none}
+.tr-target-name{flex:1;min-width:0;font-size:13px;font-weight:600;color:#fff;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.tr-target-fields{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.tr-target-input{
+  width:34px;padding:6px 4px;background:var(--tr-surface-3);
+  border:1px solid var(--tr-line);border-radius:8px;color:#fff;font-size:13px;
+  text-align:center;font-family:inherit;outline:none;font-variant-numeric:tabular-nums;
+}
+.tr-target-input:focus{border-color:var(--tr-accent)}
+.tr-target-x{font-size:11px;color:var(--tr-text-3);font-weight:600}
+
+/* Drag list (muscles + exercises) */
+.tr-drag-list{display:flex;flex-direction:column;gap:8px;touch-action:pan-y}
+.tr-drag-item{
+  display:flex;align-items:center;gap:10px;padding:12px;
+  background:var(--tr-surface-3);border-radius:14px;border:1px solid var(--tr-line);
+  transition:border-color 0.2s ease,background 0.2s ease;
+  user-select:none;-webkit-user-select:none;touch-action:manipulation;
+}
+.tr-drag-item:hover{border-color:var(--tr-line-strong)}
+.tr-drag-item.dragging{opacity:0.95}
+.tr-drag-handle{
+  width:20px;flex-shrink:0;display:flex;flex-direction:column;gap:3px;
+  padding:6px 2px;cursor:grab;
+}
+.tr-drag-handle span{
+  width:100%;height:2px;background:var(--tr-text-3);border-radius:2px;
+}
+.tr-drag-body{
+  flex:1;min-width:0;background:transparent;border:none;padding:0;
+  text-align:left;color:inherit;font-family:inherit;cursor:pointer;
+}
+.tr-drag-title{font-size:15px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr-drag-sub{font-size:12px;color:var(--tr-text-3);margin-top:2px}
+.tr-drag-del{
+  width:32px;height:32px;border-radius:50%;background:transparent;border:none;
+  color:var(--tr-text-3);cursor:pointer;flex-shrink:0;font-size:13px;
+}
+.tr-drag-del:hover{color:#ff8080;background:rgba(255,128,128,0.08)}
 
 </style>
 </head>
@@ -1992,6 +2078,27 @@ body.light .notes-tb-btn{color:#555}
           <div class="accent-swatch" data-color="#fbbf24" style="background:#fbbf24"></div>
           <div class="accent-swatch" data-color="#f87171" style="background:#f87171"></div>
           <div class="accent-swatch" data-color="#e2e8f0" style="background:#e2e8f0"></div>
+          <div class="accent-swatch" data-color="#5eead4" style="background:#5eead4" title="Training cyan"></div>
+          <div class="accent-swatch" data-color="#22d3ee" style="background:#22d3ee" title="Bright cyan"></div>
+          <div class="accent-swatch" data-color="#38bdf8" style="background:#38bdf8" title="Sky"></div>
+          <div class="accent-swatch" data-color="#818cf8" style="background:#818cf8" title="Indigo"></div>
+          <div class="accent-swatch" data-color="#c084fc" style="background:#c084fc" title="Violet"></div>
+          <div class="accent-swatch" data-color="#e879f9" style="background:#e879f9" title="Fuchsia"></div>
+          <div class="accent-swatch" data-color="#fb7185" style="background:#fb7185" title="Rose"></div>
+          <div class="accent-swatch" data-color="#facc15" style="background:#facc15" title="Amber"></div>
+          <div class="accent-swatch" data-color="#a3e635" style="background:#a3e635" title="Lime"></div>
+          <div class="accent-swatch" data-color="#4ade80" style="background:#4ade80" title="Emerald"></div>
+          <div class="accent-swatch" data-color="#10b981" style="background:#10b981" title="Deep emerald"></div>
+          <div class="accent-swatch" data-color="#0ea5e9" style="background:#0ea5e9" title="Ocean"></div>
+          <div class="accent-swatch" data-color="#6366f1" style="background:#6366f1" title="Deep indigo"></div>
+          <div class="accent-swatch" data-color="#d946ef" style="background:#d946ef" title="Magenta"></div>
+          <div class="accent-swatch" data-color="#ef4444" style="background:#ef4444" title="Crimson"></div>
+          <div class="accent-swatch" data-color="#f97316" style="background:#f97316" title="Sunset"></div>
+          <div class="accent-swatch" data-color="#eab308" style="background:#eab308" title="Gold"></div>
+          <div class="accent-swatch" data-color="#84cc16" style="background:#84cc16" title="Grass"></div>
+          <div class="accent-swatch" data-color="#14b8a6" style="background:#14b8a6" title="Teal"></div>
+          <div class="accent-swatch" data-color="#f5f5f4" style="background:#f5f5f4" title="Pearl"></div>
+          <div class="accent-swatch" data-color="#a8a29e" style="background:#a8a29e" title="Stone"></div>
         </div>
       </div>
       <div class="page-block settings-group">
@@ -2002,54 +2109,14 @@ body.light .notes-tb-btn{color:#555}
       <div class="page-block settings-group" id="securitySettings">
         <h2>Security & Personalisation</h2>
 
-        <!-- Password Overlay (Settings) -->
-<div class="password-overlay" id="passwordOverlay">
-  <div class="password-panel">
-    <div class="password-panel-title" id="passwordPanelTitle">Create Password</div>
-    <div class="password-panel-sub" id="passwordPanelSub">Protect your app with a password</div>
-    <div class="password-field-wrap" id="passwordCurrentWrap" style="display:none">
-      <input type="password" class="password-field" id="passwordCurrent" placeholder="Current password" autocomplete="off" />
-      <button type="button" class="password-field-toggle" data-for="passwordCurrent">Show</button>
-    </div>
-    <div class="password-field-wrap">
-      <input type="password" class="password-field" id="passwordNew" placeholder="New password" autocomplete="off" />
-      <button type="button" class="password-field-toggle" data-for="passwordNew">Show</button>
-    </div>
-    <div class="password-field-wrap">
-      <input type="password" class="password-field" id="passwordConfirm" placeholder="Confirm password" autocomplete="off" />
-      <button type="button" class="password-field-toggle" data-for="passwordConfirm">Show</button>
-    </div>
-    <div class="password-field-error" id="passwordError"></div>
-    <div class="password-success" id="passwordSuccess"></div>
-    <div class="password-panel-actions">
-      <button type="button" class="password-panel-btn ghost" id="passwordCancel">Cancel</button>
-      <button type="button" class="password-panel-btn primary" id="passwordSave">Save</button>
-    </div>
-    <button type="button" class="password-panel-btn danger" id="passwordRemove" style="display:none;margin-top:4px">Remove Password</button>
-  </div>
-</div>
-
-<!-- Lock Screen -->
+        <!-- Lock Screen -->
         <div class="toggle-row">
-          <div class="toggle-info"><div class="t-title">Require authentication on open</div><div class="t-sub">Lock the app when you leave</div></div>
-          <button type="button" class="toggle on" id="toggleLockRequired" aria-pressed="true"></button>
+          <div class="toggle-info"><div class="t-title">Lock screen</div><div class="t-sub">Require Face ID/Touch ID when you open the app</div></div>
+          <button type="button" class="toggle" id="toggleLockRequired" aria-pressed="false"></button>
         </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="t-title">Face ID / Touch ID</div><div class="t-sub">Use biometric unlock when available</div></div>
-          <button type="button" class="toggle on" id="toggleBiometric" aria-pressed="true"></button>
-        </div>
-        <div class="toggle-row" style="cursor:pointer" id="changePasswordRow">
-          <div class="toggle-info"><div class="t-title" id="passwordRowTitle">Change Password</div><div class="t-sub" id="passwordRowSub">Set a new app password</div></div>
-          <span style="color:var(--text3);font-size:13px">›</span>
-        </div>
-        <div style="margin-top:8px">
-          <div class="toggle-info" style="margin-bottom:8px"><div class="t-title">Auto-lock after</div></div>
-          <select class="settings-select" id="autoLockSelect">
-            <option value="60">1 minute</option>
-            <option value="120" selected>2 minutes</option>
-            <option value="300">5 minutes</option>
-            <option value="0">Never</option>
-          </select>
+        <div class="toggle-row" style="cursor:pointer" id="setupFaceIdRow">
+          <div class="toggle-info"><div class="t-title" id="faceIdRowTitle">Set up Face ID</div><div class="t-sub" id="faceIdRowSub">Register biometric unlock via WebAuthn</div></div>
+          <span id="faceIdStatus" style="color:var(--text3);font-size:13px">›</span>
         </div>
 
         <!-- Lock Screen Wallpaper -->
@@ -2187,7 +2254,7 @@ const NAV=[
     {id:"plan",label:"Plan",dot:"#34d399"},
     {id:"goals",label:"Goals",dot:"#f472b6"}]},
   {section:"HEALTH",items:[
-    {id:"training",label:"Training",dot:"#5eead4"},
+    {id:"training",label:"Training",dot:"var(--accent)"},
     {id:"weight",label:"Weight",dot:"#f472b6"},
     {id:"sleep",label:"Sleep",dot:"#38bdf8"},
     {id:"nutrition",label:"Nutrition",dot:"#34d399"}]},
@@ -2677,28 +2744,28 @@ const _origSaveGoals=saveGoals;
 const _origSaveTasks=saveTasks;
 const _origSaveEvents=saveEvents;
 
-function saveGoals(key,goals){
+saveGoals = function(key,goals){
   _origSaveGoals(key,goals);
   const date=key.replace("goals_","");
   const done=goals.filter(g=>g.done).length;
   dispatchBrain(`${date}: ${done}/${goals.length} goals`,1.5,"goals");
   brainGrow(`${date}: ${done}/${goals.length} goals`,"goals");
   appendAgentMemory({type:"data",content:`Goals updated for ${date}: ${done} of ${goals.length} completed`,source:"goals"});
-}
-function saveTasks(k,tasks){
+};
+saveTasks = function(k,tasks){
   _origSaveTasks(k,tasks);
   const date=k.replace("tasks_","");
   const done=tasks.filter(t=>t.done).length;
   dispatchBrain(`${date}: ${done}/${tasks.length} tasks`,1.5,"tasks");
   brainGrow(`${date}: ${done}/${tasks.length} tasks`,"tasks");
   appendAgentMemory({type:"data",content:`Tasks updated for ${date}: ${done} of ${tasks.length} completed`,source:"tasks"});
-}
-function saveEvents(ev){
+};
+saveEvents = function(ev){
   _origSaveEvents(ev);
   if(ev.length)dispatchBrain(`Event: ${ev[ev.length-1].title}`,1.5,"events");
   if(ev.length)brainGrow(`Event: ${ev[ev.length-1].title}`,"events");
   appendAgentMemory({type:"data",content:`Events updated: ${ev.length} total`,source:"events"});
-}
+};
 
 /* ===== Updated Insights with Memory Context ===== */
 async function runInsightsAnalysis(){
@@ -3976,12 +4043,28 @@ function bindProfile(){
   });
 }
 
+function hexToRgb(hex){
+  const h=(hex||"").replace("#","").trim();
+  if(h.length!==6)return{r:167,g:139,b:250};
+  return{r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)};
+}
 function applyTheme(){
   const isDark=readJSON("lifeos_dark_mode",true);
   document.body.classList.toggle("light",!isDark);
   const accent=readRaw("accent_color")||"#a78bfa";
-  document.documentElement.style.setProperty("--accent",accent);
+  const {r,g,b}=hexToRgb(accent);
+  const rs=document.documentElement.style;
+  rs.setProperty("--accent",accent);
+  rs.setProperty("--accent-rgb",`${r}, ${g}, ${b}`);
+  rs.setProperty("--accent-soft",`rgba(${r}, ${g}, ${b}, 0.14)`);
+  rs.setProperty("--accent-glow",`rgba(${r}, ${g}, ${b}, 0.35)`);
+  rs.setProperty("--accent-15",`rgba(${r}, ${g}, ${b}, 0.15)`);
+  rs.setProperty("--accent-30",`rgba(${r}, ${g}, ${b}, 0.30)`);
+  rs.setProperty("--accent-50",`rgba(${r}, ${g}, ${b}, 0.50)`);
+  rs.setProperty("--accent-70",`rgba(${r}, ${g}, ${b}, 0.70)`);
+  rs.setProperty("--accent-90",`rgba(${r}, ${g}, ${b}, 0.90)`);
   document.querySelectorAll(".accent-swatch").forEach(s=>s.classList.toggle("on",s.dataset.color===accent));
+  window.dispatchEvent(new CustomEvent("accentchange",{detail:{accent,r,g,b}}));
 }
 
 function bindSettings(){
@@ -4029,23 +4112,46 @@ function bindSettings(){
     const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="lifeos-export.json";a.click();
   });
 
-  /* Security & Personalisation */
-  const lockReq=$("toggleLockRequired");lockReq.classList.toggle("on",readJSON("lifeos_lock_required",true));
-  lockReq.addEventListener("click",()=>{const on=!lockReq.classList.contains("on");lockReq.classList.toggle("on",on);writeJSON("lifeos_lock_required",on);});
-
-  const bio=$("toggleBiometric");bio.classList.toggle("on",readJSON("lifeos_biometric",true));
-  bio.addEventListener("click",()=>{const on=!bio.classList.contains("on");bio.classList.toggle("on",on);writeJSON("lifeos_biometric",on);});
-
-  $("changePasswordRow").addEventListener("click",()=>{
-    const hasPw=!!readRaw(LOCK_KEY);
-    if(hasPw)openPasswordPanel("change");
-    else openPasswordPanel("create");
+  /* Security & Personalisation (Face ID / Lock Screen) */
+  const lockReq=$("toggleLockRequired");
+  lockReq.classList.toggle("on",readJSON("lifeos_lock_required",false));
+  lockReq.addEventListener("click",()=>{
+    const on=!lockReq.classList.contains("on");
+    if(on && !faceIdRegistered()){
+      // Prompt to set up Face ID first
+      registerFaceId().then(ok=>{
+        if(ok){
+          writeJSON("lifeos_lock_required",true);
+          lockReq.classList.add("on");
+          updateFaceIdRowUI();
+        }
+      });
+      return;
+    }
+    lockReq.classList.toggle("on",on);
+    writeJSON("lifeos_lock_required",on);
   });
-  updatePasswordRowUI();
-  bindPasswordPanel();
 
-  const autoLock=$("autoLockSelect");autoLock.value=String(readJSON("lifeos_autolock_seconds",120));
-  autoLock.addEventListener("change",()=>{writeJSON("lifeos_autolock_seconds",parseInt(autoLock.value)||120);});
+  function updateFaceIdRowUI(){
+    const has=faceIdRegistered();
+    $("faceIdRowTitle").textContent=has?"Remove Face ID":"Set up Face ID";
+    $("faceIdRowSub").textContent=has?"Face ID is active for unlock":"Register biometric unlock via WebAuthn";
+    $("faceIdStatus").textContent=has?"On":"›";
+    $("faceIdStatus").style.color=has?"var(--accent)":"var(--text3)";
+  }
+  updateFaceIdRowUI();
+  $("setupFaceIdRow").addEventListener("click",async ()=>{
+    if(faceIdRegistered()){
+      removeFaceId();
+      writeJSON("lifeos_lock_required",false);
+      lockReq.classList.remove("on");
+      updateFaceIdRowUI();
+    } else {
+      const ok=await registerFaceId();
+      if(ok){updateFaceIdRowUI();}
+      else{alert("Face ID setup failed or was cancelled. Make sure your device supports biometric authentication.");}
+    }
+  });
 
   // Wallpaper
   const wpGrid=$("wallpaperGrid");const savedWp=readRaw("lifeos_wallpaper")||"black";
@@ -4295,122 +4401,10 @@ async function checkWeeklyReport(){
   if(!notified){pushNotify("Life OS","Good morning, Sir. Your weekly report is ready.",{tag:"weekly"});writeRaw("lifeos_weekly_notified",dateKey(today));}
 }
 
-const LOCK_KEY="lifeos_lock_pin";
+/* Legacy constant kept for cleanup only */
 
 
-/* ===== Password Flow ===== */
-let passwordMode=""; // "create" | "change" | "remove"
-function openPasswordPanel(mode){
-  passwordMode=mode;
-  const overlay=$("passwordOverlay");
-  const title=$("passwordPanelTitle");
-  const sub=$("passwordPanelSub");
-  const currentWrap=$("passwordCurrentWrap");
-  const removeBtn=$("passwordRemove");
-  const saveBtn=$("passwordSave");
-  const currentInput=$("passwordCurrent");
-  const newInput=$("passwordNew");
-  const confirmInput=$("passwordConfirm");
-  // Reset fields
-  [currentInput,newInput,confirmInput].forEach(el=>{if(el){el.value="";el.type="password";}});
-  $("passwordError").textContent="";
-  $("passwordSuccess").textContent="";
-  document.querySelectorAll(".password-field-toggle").forEach(btn=>btn.textContent="Show");
-  if(mode==="create"){
-    title.textContent="Create Password";
-    sub.textContent="Protect your app with a password";
-    currentWrap.style.display="none";
-    removeBtn.style.display="none";
-    saveBtn.textContent="Save Password";
-  }else if(mode==="change"){
-    title.textContent="Change Password";
-    sub.textContent="Enter your current password, then set a new one";
-    currentWrap.style.display="block";
-    removeBtn.style.display="none";
-    saveBtn.textContent="Update Password";
-  }else if(mode==="remove"){
-    title.textContent="Remove Password";
-    sub.textContent="Enter your current password to remove protection";
-    currentWrap.style.display="block";
-    $("passwordNew").parentElement.style.display="none";
-    $("passwordConfirm").parentElement.style.display="none";
-    removeBtn.style.display="none";
-    saveBtn.textContent="Remove Password";
-    saveBtn.classList.remove("primary");
-    saveBtn.classList.add("danger");
-  }
-  overlay.classList.add("show");
-  setTimeout(()=>{const firstVisible=[currentInput,newInput,confirmInput].find(el=>el&&el.parentElement.style.display!=="none");if(firstVisible)firstVisible.focus();},100);
-}
-function closePasswordPanel(){
-  $("passwordOverlay").classList.remove("show");
-  const saveBtn=$("passwordSave");
-  saveBtn.classList.remove("danger");
-  saveBtn.classList.add("primary");
-  $("passwordNew").parentElement.style.display="block";
-  $("passwordConfirm").parentElement.style.display="block";
-}
-function validatePassword(){
-  const current=$("passwordCurrent").value;
-  const newPw=$("passwordNew").value;
-  const confirm=$("passwordConfirm").value;
-  const err=$("passwordError");
-  const succ=$("passwordSuccess");
-  err.textContent="";succ.textContent="";
-  if(passwordMode==="remove"){
-    if(!current){err.textContent="Enter your current password";return false;}
-    if(current!==readRaw(LOCK_KEY)){err.textContent="Current password is incorrect";return false;}
-    return true;
-  }
-  if(passwordMode==="change"){
-    if(!current){err.textContent="Enter your current password";return false;}
-    if(current!==readRaw(LOCK_KEY)){err.textContent="Current password is incorrect";return false;}
-  }
-  if(!newPw){err.textContent="Password cannot be empty";return false;}
-  if(newPw!==confirm){err.textContent="Passwords do not match";return false;}
-  return true;
-}
-function savePassword(){
-  if(!validatePassword())return;
-  const newPw=$("passwordNew").value;
-  if(passwordMode==="remove"){
-    writeRaw(LOCK_KEY,"");
-    $("passwordSuccess").textContent="Password removed. App will no longer lock.";
-    updatePasswordRowUI();
-    setTimeout(closePasswordPanel,1500);
-    return;
-  }
-  writeRaw(LOCK_KEY,newPw);
-  $("passwordSuccess").textContent=passwordMode==="create"?"Password saved successfully":"Password updated successfully";
-  updatePasswordRowUI();
-  setTimeout(closePasswordPanel,1200);
-}
-function updatePasswordRowUI(){
-  const hasPw=!!readRaw(LOCK_KEY);
-  $("passwordRowTitle").textContent=hasPw?"Change Password":"Create Password";
-  $("passwordRowSub").textContent=hasPw?"Update or remove your app password":"Protect your app with a password";
-}
-function bindPasswordPanel(){
-  // Show/hide toggles
-  document.querySelectorAll(".password-field-toggle").forEach(btn=>{
-    btn.addEventListener("click",e=>{
-      const targetId=btn.dataset.for;
-      const input=$(targetId);if(!input)return;
-      if(input.type==="password"){input.type="text";btn.textContent="Hide";}
-      else{input.type="password";btn.textContent="Show";}
-      input.focus();
-    });
-  });
-  // Save / Cancel / Remove
-  $("passwordSave").addEventListener("click",savePassword);
-  $("passwordCancel").addEventListener("click",closePasswordPanel);
-  $("passwordRemove").addEventListener("click",()=>{openPasswordPanel("remove");});
-  // Enter key on inputs
-  ["passwordCurrent","passwordNew","passwordConfirm"].forEach(id=>{
-    const el=$(id);if(!el)return;
-    el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();savePassword();}});
-  });
-}
+/* ===== Password Flow removed — see WebAuthn Face ID below ===== */
 
 /* ===== Haptic Feedback ===== */
 function haptic(type){
@@ -4449,14 +4443,14 @@ function runBoot(){
   },2600);
 }
 
-/* ===== Lock Screen Premium ===== */
+/* ===== Lock Screen (WebAuthn Face ID) ===== */
 let isLocked=true;
-let lockPinVal="";
+const FACEID_KEY="lifeos_faceid_credential_id";
+function faceIdRegistered(){return !!readRaw(FACEID_KEY);}
 function initLock(){
   const screen=$("lockScreen");if(!screen)return;
-  const pin=readRaw(LOCK_KEY);
-  const lockRequired=readJSON("lifeos_lock_required",true);
-  if(!pin||!lockRequired){
+  const lockRequired=readJSON("lifeos_lock_required",false);
+  if(!lockRequired||!faceIdRegistered()){
     isLocked=false;
     document.body.classList.remove("app-locked");
     screen.classList.add("unlocked");
@@ -4465,62 +4459,20 @@ function initLock(){
   isLocked=true;
   document.body.classList.add("app-locked");
   screen.classList.remove("unlocked");
-  // App name
   const appNameEl=$("lockAppName");
   if(appNameEl)appNameEl.textContent=appName()||"Solace";
-  // Subtitle: current time
-  const now=new Date();
-  const timeStr=now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",hour12:false});
-  const dateStr=now.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
-  const subEl=$("lockSubtitle");
-  if(subEl)subEl.textContent=timeStr+"  ·  "+dateStr;
-  // Profile photo
-  const photo=readRaw("profile_photo");
-  const img=$("lockProfilePhoto");
-  const initial=$("lockProfileInitial");
-  if(photo&&img){img.src=photo;img.style.display="block";if(initial)initial.style.display="none";}
-  else if(initial){
-    initial.style.display="flex";
-    if(img)img.style.display="none";
-    const name=readRaw("profile_name")||"User";
-    initial.textContent=name.charAt(0).toUpperCase();
+  const hello=$("lockHello");
+  if(hello){
+    const name=readRaw("profile_name")||"there";
+    hello.textContent="Hello "+name;
   }
-  // Welcome text
-  const welcome=$("lockWelcome");
-  if(welcome){
-    const name=readRaw("profile_name")||"Sir";
-    welcome.textContent="Welcome back, "+name;
+  hideLockError();
+  const btn=$("lockUnlockBtn");
+  if(btn&&!btn.dataset.bound){
+    btn.dataset.bound="1";
+    btn.addEventListener("click",()=>{if(isLocked)tryBiometric();});
   }
-  // Reset pin
-  lockPinVal="";updateLockDots();hideLockError();
-  // Bind keypad once
-  const keypad=$("lockKeypad");
-  if(keypad&&!keypad.dataset.bound){
-    keypad.dataset.bound="1";
-    keypad.addEventListener("click",e=>{
-      const key=e.target.closest(".lock-key");if(!key)return;
-      haptic("light");
-      const d=key.dataset.d;
-      if(lockPinVal.length<4){lockPinVal+=d;updateLockDots();if(lockPinVal.length===4)setTimeout(checkPin,120);}
-    });
-    $("lockDelete").addEventListener("click",e=>{
-      e.stopPropagation();
-      lockPinVal=lockPinVal.slice(0,-1);
-      updateLockDots();
-      hideLockError();
-    });
-    $("lockForgot").addEventListener("click",e=>{
-      e.stopPropagation();
-      haptic("light");
-      unlockApp();
-    });
-  }
-  // Auto biometric
-  const bioEnabled=readJSON("lifeos_biometric",true);
-  if(bioEnabled)setTimeout(()=>{if(isLocked)tryBiometric();},600);
-}
-function updateLockDots(){
-  document.querySelectorAll(".lock-dot").forEach((dot,i)=>{dot.classList.toggle("filled",i<lockPinVal.length);});
+  setTimeout(()=>{if(isLocked)tryBiometric();},500);
 }
 function showLockError(msg){
   const el=$("lockError");if(!el)return;el.textContent=msg;el.classList.add("show");
@@ -4530,51 +4482,65 @@ function hideLockError(){
 }
 async function tryBiometric(){
   if(!isLocked)return;
-  if(!window.PublicKeyCredential)return;
+  if(!window.PublicKeyCredential){showLockError("Face ID not supported in this browser");return;}
+  const credIdB64=readRaw(FACEID_KEY);
+  if(!credIdB64){showLockError("Set up Face ID in Settings first");return;}
   try{
-    const cred=await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:appName()||"Solace"},user:{id:new Uint8Array(8),name:"user",displayName:"User"},pubKeyCredParams:[{alg:-7,type:"public-key"}],timeout:15000,authenticatorSelection:{userVerification:"required"}}});
+    const credId=Uint8Array.from(atob(credIdB64),c=>c.charCodeAt(0));
+    const cred=await navigator.credentials.get({publicKey:{
+      challenge:crypto.getRandomValues(new Uint8Array(32)),
+      allowCredentials:[{id:credId,type:"public-key",transports:["internal"]}],
+      timeout:60000,
+      userVerification:"required"
+    }});
     if(cred){haptic("unlock");unlockApp();}
-  }catch(e){}
-}
-function checkPin(){
-  if(lockPinVal===readRaw(LOCK_KEY)){haptic("unlock");unlockApp();}
-  else{haptic("error");lockPinVal="";updateLockDots();showLockError("Incorrect PIN");setTimeout(hideLockError,2500);}
+  }catch(e){
+    showLockError("Authentication cancelled. Tap to try again.");
+    setTimeout(hideLockError,3000);
+  }
 }
 function unlockApp(){
   isLocked=false;
   document.body.classList.remove("app-locked");
   $("lockScreen").classList.add("unlocked");
-  resetLockTimer();
 }
 function lockApp(){
   const s=$("lockScreen");if(!s)return;
+  if(!readJSON("lifeos_lock_required",false)||!faceIdRegistered())return;
   isLocked=true;
   document.body.classList.add("app-locked");
   s.classList.remove("unlocked");
-  lockPinVal="";updateLockDots();hideLockError();
-  const bioEnabled=readJSON("lifeos_biometric",true);
-  if(bioEnabled)setTimeout(()=>{if(isLocked)tryBiometric();},400);
+  hideLockError();
+  setTimeout(()=>{if(isLocked)tryBiometric();},300);
 }
-
-/* ===== Auto-Lock ===== */
-let lockTimer=null;
-let lockTimerFiredAt=null;
-function resetLockTimer(){
-  if(isLocked)return;
-  if(lockTimer)clearTimeout(lockTimer);
-  const secs=readJSON("lifeos_autolock_seconds",120);
-  if(!secs||secs<=0){lockTimerFiredAt=null;return;}
-  lockTimerFiredAt=Date.now()+secs*1000;
-  lockTimer=setTimeout(()=>{if(!isLocked)lockApp();},secs*1000);
-}
-["click","touchstart","keydown","scroll","mousemove"].forEach(ev=>{
-  document.addEventListener(ev,resetLockTimer,{passive:true});
-});
-document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="visible"&&!isLocked&&readRaw(LOCK_KEY)&&readJSON("lifeos_lock_required",true)){
-    if(lockTimerFiredAt&&Date.now()>=lockTimerFiredAt){lockApp();}
+async function registerFaceId(){
+  if(!window.PublicKeyCredential){alert("Face ID / WebAuthn not supported in this browser.");return false;}
+  try{
+    const userId=crypto.getRandomValues(new Uint8Array(16));
+    const name=readRaw("profile_name")||"User";
+    const cred=await navigator.credentials.create({publicKey:{
+      challenge:crypto.getRandomValues(new Uint8Array(32)),
+      rp:{name:appName()||"Solace",id:location.hostname},
+      user:{id:userId,name:name.toLowerCase().replace(/\s+/g,"_"),displayName:name},
+      pubKeyCredParams:[{alg:-7,type:"public-key"},{alg:-257,type:"public-key"}],
+      timeout:60000,
+      authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},
+      attestation:"none"
+    }});
+    if(cred){
+      const rawId=new Uint8Array(cred.rawId);
+      const b64=btoa(String.fromCharCode(...rawId));
+      writeRaw(FACEID_KEY,b64);
+      return true;
+    }
+    return false;
+  }catch(e){
+    console.warn("Face ID registration failed:",e);
+    return false;
   }
-});
+}
+function removeFaceId(){writeRaw(FACEID_KEY,"");}
+
 
 /* ===== Agent Boot Sequence ===== */
 const AGENT_BOOT_LINES=["Initialising systems...","Loading memory...","Calibrating neural pathways...","Online, Sir."];
@@ -4974,7 +4940,6 @@ function init(){
   renderBriefing();
   checkWeeklyReport();
   renderStreak();
-  resetLockTimer();
 }
 
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init); else init();
@@ -5000,44 +4965,14 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 
 <!-- Lock Screen -->
 <div class="lock-screen" id="lockScreen">
-  <div class="lock-app-name" id="lockAppName">Solace</div>
-  <div class="lock-subtitle" id="lockSubtitle">Secure Access</div>
-  <div class="lock-panel" id="lockPanel">
-    <div style="display:flex;flex-direction:column;align-items:center;width:100%">
-      <img class="lock-profile-photo" id="lockProfilePhoto" alt="" style="display:none" />
-      <div class="lock-profile-initial" id="lockProfileInitial">U</div>
-      <div class="lock-welcome" id="lockWelcome">Welcome back, Sir</div>
-      <div class="lock-dots" id="lockDots">
-        <div class="lock-dot" data-i="0"></div>
-        <div class="lock-dot" data-i="1"></div>
-        <div class="lock-dot" data-i="2"></div>
-        <div class="lock-dot" data-i="3"></div>
-      </div>
-      <div class="lock-keypad" id="lockKeypad">
-        <div class="lock-keypad-row">
-          <button class="lock-key" data-d="1"><span>1</span></button>
-          <button class="lock-key" data-d="2"><span>2</span></button>
-          <button class="lock-key" data-d="3"><span>3</span></button>
-        </div>
-        <div class="lock-keypad-row">
-          <button class="lock-key" data-d="4"><span>4</span></button>
-          <button class="lock-key" data-d="5"><span>5</span></button>
-          <button class="lock-key" data-d="6"><span>6</span></button>
-        </div>
-        <div class="lock-keypad-row">
-          <button class="lock-key" data-d="7"><span>7</span></button>
-          <button class="lock-key" data-d="8"><span>8</span></button>
-          <button class="lock-key" data-d="9"><span>9</span></button>
-        </div>
-        <div class="lock-keypad-row">
-          <div style="width:78px"></div>
-          <button class="lock-key" data-d="0"><span>0</span></button>
-          <button class="lock-delete" id="lockDelete" type="button">⌫</button>
-        </div>
-      </div>
-    </div>
+  <div class="lock-hello" id="lockHello">Hello Caylan</div>
+  <div class="lock-center">
+    <div class="lock-app-name" id="lockAppName">Solace</div>
+    <button type="button" class="lock-unlock-btn" id="lockUnlockBtn" data-testid="lock-unlock-btn">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v3H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-2V7a5 5 0 0 0-5-5z"/><circle cx="12" cy="15" r="1.5"/></svg>
+      <span id="lockUnlockLabel">Unlock with Face ID</span>
+    </button>
     <div class="lock-error" id="lockError"></div>
-    <button class="lock-forgot" id="lockForgot" type="button">Forgot password</button>
   </div>
 </div>
 <!-- Streak Celebration -->

@@ -21,16 +21,35 @@
     current: "tr_current_workout_v1",
     goals: "tr_goals_v1",
     prefs: "tr_prefs_v1",
+    muscles: "tr_muscles_v1",
+    split: "tr_split_v1",
+    targets: "tr_targets_v1",
   };
 
   const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const BODY_PARTS = ["Chest","Back","Shoulders","Biceps","Triceps","Quads","Hamstrings","Glutes","Calves","Core"];
 
+  const DEFAULT_MUSCLES = [
+    { name:"Shoulders" },
+    { name:"Chest" },
+    { name:"Biceps" },
+    { name:"Triceps" },
+    { name:"Forearms" },
+    { name:"Abs" },
+    { name:"Legs" },
+    { name:"Back" },
+    { name:"Neck" },
+  ];
+
   const defaultProgram = () => DAYS.map(d => ({ day: d, name: "", exercises: [], rest: d==="Sun" }));
+  const defaultMuscles = () => DEFAULT_MUSCLES.map(m => ({ id: uid(), name: m.name, exercises: [] }));
+  const defaultSplit = () => DAYS.reduce((a,d) => (a[d]=[], a), {});
+  const defaultTargets = () => ({});
 
   const state = {
     tab: "home",
     selectedDate: today(),
+    programsView: { mode: "list", muscleId: null },
     data: {
       programs: read(KEYS.programs, defaultProgram()),
       workouts: read(KEYS.workouts, []),
@@ -40,8 +59,13 @@
       current: read(KEYS.current, null),
       goals: read(KEYS.goals, []),
       prefs: read(KEYS.prefs, { unit: "kg" }),
+      muscles: read(KEYS.muscles, defaultMuscles()),
+      split: read(KEYS.split, defaultSplit()),
+      targets: read(KEYS.targets, defaultTargets()),
     },
   };
+  // Ensure split has all days (backward compat)
+  DAYS.forEach(d => { if(!state.data.split[d]) state.data.split[d] = []; });
 
   function save(key){ write(KEYS[key], state.data[key]); }
   function saveAll(){ Object.keys(KEYS).forEach(k => write(KEYS[k], state.data[k])); }
@@ -648,38 +672,120 @@
 
   // ============ PROGRAMS ============
   function renderPrograms(){
+    if(state.programsView.mode === "detail"){
+      return renderProgramMuscleDetail(state.programsView.muscleId);
+    }
+    return renderProgramList();
+  }
+
+  function renderProgramList(){
+    const muscles = state.data.muscles;
+    const split = state.data.split;
+    const targets = state.data.targets;
     return `
-      <div class="tr-card">
-        <div class="tr-card-title">Weekly split</div>
-        <p style="font-size:13px;color:var(--tr-text-2);margin-bottom:16px">Structure your week. Add exercises to each training day and mark rest days.</p>
-        ${state.data.programs.map((p,i)=> renderProgramDay(p,i)).join("")}
+      <div class="tr-split-targets">
+        <div class="tr-card tr-split-card">
+          <div class="tr-card-title">Split</div>
+          <p style="font-size:12px;color:var(--tr-text-3);margin-bottom:10px">Tap a day, then tap muscles below to add them.</p>
+          <div class="tr-split-days" data-testid="split-days">
+            ${DAYS.map(d => renderSplitDay(d, split[d]||[], muscles)).join("")}
+          </div>
+        </div>
+        <div class="tr-card tr-targets-card">
+          <div class="tr-card-title">Training Targets</div>
+          <p style="font-size:12px;color:var(--tr-text-3);margin-bottom:10px">Sets × reps goals per muscle for overload.</p>
+          <div data-testid="targets-list">
+            ${muscles.map(m => renderTargetRow(m, targets[m.id])).join("")}
+          </div>
+        </div>
+      </div>
+
+      <div class="tr-card tr-mt-lg">
+        <div class="tr-flex-between" style="margin-bottom:6px">
+          <div class="tr-card-title" style="margin-bottom:0">Muscle Groups</div>
+          <span style="font-size:11px;color:var(--tr-text-3);letter-spacing:0.08em">Hold & drag to reorder</span>
+        </div>
+        <p style="font-size:12px;color:var(--tr-text-3);margin:0 0 12px 0">Tap a muscle to add exercises. Frequently trained go to the top.</p>
+        <div class="tr-drag-list" data-drag-list="muscles" data-testid="muscles-list">
+          ${muscles.map((m,i) => renderMuscleRow(m, i)).join("")}
+        </div>
+        <button type="button" class="tr-btn tr-btn-ghost tr-btn-full tr-mt" data-action="add-muscle" data-testid="add-muscle-btn">+ Add muscle group</button>
       </div>
     `;
   }
 
-  function renderProgramDay(p, i){
+  function renderSplitDay(day, muscleIds, muscles){
+    const names = muscleIds.map(id => muscles.find(m=>m.id===id)?.name).filter(Boolean);
+    const active = state.data.splitActiveDay === day;
     return `
-      <div class="tr-day-row" data-day-idx="${i}" data-testid="program-day-${p.day}">
-        <div class="tr-day-head">
-          <div class="tr-day-name">${p.day} <span style="font-size:12px;color:var(--tr-text-3);font-weight:400">· ${p.rest?"Rest":(p.name||"Training")}</span></div>
-          <button type="button" class="tr-day-tag ${p.rest?"rest":"workout"}" data-toggle-rest="${i}" data-testid="toggle-rest-${p.day}">${p.rest?"Rest":"Workout"}</button>
+      <div class="tr-split-day ${active?"active":""}" data-split-day="${day}" data-testid="split-day-${day}">
+        <div class="tr-split-day-head">
+          <span class="tr-split-day-lbl">${day}</span>
+          ${muscleIds.length?"":`<span class="tr-split-day-rest">Rest</span>`}
         </div>
-        ${!p.rest ? `
-          <div style="margin-bottom:10px">
-            <input type="text" class="tr-input" placeholder="e.g. Push day, Upper body..." value="${escapeHtml(p.name||"")}" data-day-name="${i}" data-testid="day-name-${p.day}">
-          </div>
-          <div class="tr-day-exercises" data-testid="day-exercises-${p.day}">
-            ${p.exercises.length ? p.exercises.map((ex,ei)=>`
-              <div class="tr-flex-between" style="padding:4px 0">
-                <span>• ${escapeHtml(typeof ex === "string" ? ex : ex.name)}</span>
-                <button type="button" class="tr-btn tr-btn-sm tr-btn-ghost" data-remove-day-ex="${i}" data-ex-i="${ei}" data-testid="remove-day-ex-${p.day}-${ei}" style="padding:4px 8px">✕</button>
-              </div>`).join("") : `<div class="empty">No exercises assigned yet.</div>`}
-          </div>
-          <div class="tr-row tr-mt">
-            <input type="text" class="tr-input" placeholder="Add exercise..." data-day-add-input="${i}" data-testid="day-add-input-${p.day}">
-            <button type="button" class="tr-btn tr-btn-ghost" style="flex:0" data-add-day-ex="${i}" data-testid="add-day-ex-${p.day}">Add</button>
-          </div>
-        ` : `<div style="font-size:12px;color:var(--tr-text-3);font-style:italic">Rest & recover.</div>`}
+        <div class="tr-split-day-chips">
+          ${names.length ? names.map((n,i)=>`<span class="tr-chip" data-testid="chip-${day}-${i}">${escapeHtml(n)}<button type="button" data-remove-split="${day}" data-idx="${i}" data-testid="chip-remove-${day}-${i}" aria-label="Remove">✕</button></span>`).join("") : `<span class="tr-split-day-empty">Tap muscles to add</span>`}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderTargetRow(muscle, tgt){
+    tgt = tgt || { sets:"", repsLow:"", repsHigh:"" };
+    return `
+      <div class="tr-target-row" data-testid="target-row-${muscle.id}">
+        <div class="tr-target-name">${escapeHtml(muscle.name)}</div>
+        <div class="tr-target-fields">
+          <input type="number" min="0" placeholder="2" class="tr-target-input" value="${tgt.sets??""}" data-target="${muscle.id}" data-field="sets" data-testid="target-sets-${muscle.id}" aria-label="Sets"><span class="tr-target-x">×</span>
+          <input type="number" min="0" placeholder="6" class="tr-target-input" value="${tgt.repsLow??""}" data-target="${muscle.id}" data-field="repsLow" data-testid="target-low-${muscle.id}" aria-label="Reps low"><span class="tr-target-x">–</span>
+          <input type="number" min="0" placeholder="8" class="tr-target-input" value="${tgt.repsHigh??""}" data-target="${muscle.id}" data-field="repsHigh" data-testid="target-high-${muscle.id}" aria-label="Reps high">
+        </div>
+      </div>
+    `;
+  }
+
+  function renderMuscleRow(m, i){
+    const count = m.exercises.length;
+    return `
+      <div class="tr-drag-item" data-drag-idx="${i}" data-muscle-id="${m.id}" data-testid="muscle-row-${m.id}">
+        <div class="tr-drag-handle" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <button type="button" class="tr-drag-body" data-open-muscle="${m.id}" data-testid="open-muscle-${m.id}">
+          <div class="tr-drag-title">${escapeHtml(m.name)}</div>
+          <div class="tr-drag-sub">${count} ${count===1?"exercise":"exercises"}</div>
+        </button>
+        <button type="button" class="tr-drag-del" data-remove-muscle="${m.id}" data-testid="remove-muscle-${m.id}" aria-label="Remove">✕</button>
+      </div>
+    `;
+  }
+
+  function renderProgramMuscleDetail(muscleId){
+    const m = state.data.muscles.find(x => x.id === muscleId);
+    if(!m) return renderProgramList();
+    return `
+      <div class="tr-card">
+        <div class="tr-flex-between" style="margin-bottom:14px">
+          <button type="button" class="tr-btn tr-btn-ghost tr-btn-sm" data-action="programs-back" data-testid="programs-back">← Programs</button>
+          <span style="font-size:11px;color:var(--tr-text-3);letter-spacing:0.08em">Hold & drag to reorder</span>
+        </div>
+        <h3 data-testid="muscle-detail-title">${escapeHtml(m.name)}</h3>
+        <p style="margin-top:6px">Exercises you train for ${escapeHtml(m.name.toLowerCase())}.</p>
+        <div class="tr-drag-list tr-mt" data-drag-list="exercises" data-muscle-id="${m.id}" data-testid="muscle-exercises">
+          ${m.exercises.length ? m.exercises.map((ex,i) => `
+            <div class="tr-drag-item" data-drag-idx="${i}" data-testid="muscle-ex-${i}">
+              <div class="tr-drag-handle" aria-hidden="true"><span></span><span></span><span></span></div>
+              <div class="tr-drag-body" style="cursor:default">
+                <div class="tr-drag-title">${escapeHtml(ex.name)}</div>
+              </div>
+              <button type="button" class="tr-drag-del" data-remove-muscle-ex="${i}" data-testid="remove-muscle-ex-${i}" aria-label="Remove">✕</button>
+            </div>
+          `).join("") : `<div class="tr-empty">No exercises yet for ${escapeHtml(m.name)}.</div>`}
+        </div>
+        <div class="tr-row tr-mt">
+          <input type="text" class="tr-input" placeholder="e.g. Cable Curls" data-muscle-ex-input data-testid="muscle-ex-input">
+          <button type="button" class="tr-btn tr-btn-primary" style="flex:0 0 auto" data-action="add-muscle-ex" data-testid="add-muscle-ex-btn">Add</button>
+        </div>
       </div>
     `;
   }
@@ -933,7 +1039,7 @@
       viewWorkoutModal(id);
     }));
 
-    // Program day toggle rest
+    // Program day toggle rest (legacy — no longer rendered, kept for backward compat)
     root.querySelectorAll("[data-toggle-rest]").forEach(b => b.addEventListener("click", () => {
       const i = Number(b.dataset.toggleRest);
       state.data.programs[i].rest = !state.data.programs[i].rest;
@@ -941,28 +1047,111 @@
       render();
     }));
 
-    // Program day name
+    // ===== New Programs handlers =====
+    // Split day click → active day for adding muscles
+    root.querySelectorAll("[data-split-day]").forEach(el => el.addEventListener("click", (e) => {
+      if(e.target.closest("[data-remove-split]")) return;
+      const d = el.dataset.splitDay;
+      state.data.splitActiveDay = state.data.splitActiveDay === d ? null : d;
+      render();
+    }));
+    // Remove muscle from split day
+    root.querySelectorAll("[data-remove-split]").forEach(b => b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const d = b.dataset.removeSplit;
+      const idx = Number(b.dataset.idx);
+      state.data.split[d].splice(idx, 1);
+      save("split"); render();
+    }));
+    // Muscle row: tap opens detail (unless drag-in-progress)
+    root.querySelectorAll("[data-open-muscle]").forEach(b => b.addEventListener("click", (e) => {
+      const id = b.dataset.openMuscle;
+      // If a split day is active, add this muscle to that day instead
+      if(state.data.splitActiveDay){
+        const d = state.data.splitActiveDay;
+        if(!state.data.split[d].includes(id)) state.data.split[d].push(id);
+        save("split"); render();
+      } else {
+        state.programsView = { mode:"detail", muscleId:id };
+        render();
+        window.scrollTo({top:0,behavior:"smooth"});
+      }
+    }));
+    // Remove muscle
+    root.querySelectorAll("[data-remove-muscle]").forEach(b => b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = b.dataset.removeMuscle;
+      const m = state.data.muscles.find(x=>x.id===id);
+      if(!m) return;
+      openModal("Remove muscle group?", `"${m.name}" will be removed from your programs, split, and targets.`, "", [
+        { id:"cancel", label:"Cancel" },
+        { id:"confirm", label:"Remove", primary:true }
+      ]).then(res => {
+        if(res?.action === "confirm"){
+          state.data.muscles = state.data.muscles.filter(x=>x.id!==id);
+          Object.keys(state.data.split).forEach(d => {
+            state.data.split[d] = state.data.split[d].filter(x=>x!==id);
+          });
+          delete state.data.targets[id];
+          save("muscles"); save("split"); save("targets");
+          render();
+        }
+      });
+    }));
+    // Target inputs
+    root.querySelectorAll("[data-target]").forEach(inp => inp.addEventListener("input", (e) => {
+      const id = e.target.dataset.target;
+      const field = e.target.dataset.field;
+      const val = e.target.value === "" ? "" : Number(e.target.value);
+      if(!state.data.targets[id]) state.data.targets[id] = { sets:"", repsLow:"", repsHigh:"" };
+      state.data.targets[id][field] = val;
+      save("targets");
+    }));
+    // Programs back
+    root.querySelectorAll("[data-action='programs-back']").forEach(b => b.addEventListener("click", () => {
+      state.programsView = { mode:"list", muscleId:null };
+      render();
+    }));
+    // Muscle exercises: remove
+    root.querySelectorAll("[data-remove-muscle-ex]").forEach(b => b.addEventListener("click", () => {
+      const idx = Number(b.dataset.removeMuscleEx);
+      const m = state.data.muscles.find(x => x.id === state.programsView.muscleId);
+      if(!m) return;
+      m.exercises.splice(idx, 1);
+      save("muscles"); render();
+    }));
+    // Muscle exercise add on Enter
+    const muscleExInput = root.querySelector("[data-muscle-ex-input]");
+    if(muscleExInput){
+      muscleExInput.addEventListener("keydown", (e) => {
+        if(e.key === "Enter"){ e.preventDefault(); addMuscleExerciseFromInput(); }
+      });
+    }
+    // Drag reorder
+    root.querySelectorAll("[data-drag-list]").forEach(list => attachDragReorder(list));
+
+    // Program day name (legacy)
     root.querySelectorAll("[data-day-name]").forEach(i => i.addEventListener("input", (e) => {
       const idx = Number(e.target.dataset.dayName);
-      state.data.programs[idx].name = e.target.value;
-      save("programs");
+      if(state.data.programs[idx]){ state.data.programs[idx].name = e.target.value; save("programs"); }
     }));
 
-    // Add day exercise
+    // Add day exercise (legacy)
     root.querySelectorAll("[data-add-day-ex]").forEach(b => b.addEventListener("click", () => {
       const i = Number(b.dataset.addDayEx);
       const input = root.querySelector(`[data-day-add-input="${i}"]`);
       const val = (input?.value || "").trim();
-      if(!val) return;
+      if(!val || !state.data.programs[i]) return;
       state.data.programs[i].exercises.push(val);
       save("programs");
       render();
     }));
 
-    // Remove day exercise
+    // Remove day exercise (legacy)
     root.querySelectorAll("[data-remove-day-ex]").forEach(b => b.addEventListener("click", () => {
       const i = Number(b.dataset.removeDayEx);
       const ei = Number(b.dataset.exI);
+      if(!state.data.programs[i]) return;
       state.data.programs[i].exercises.splice(ei,1);
       save("programs");
       render();
@@ -1097,6 +1286,146 @@
       });
     }
     else if(action === "add-bench-tip"){ addBenchTip(); }
+    else if(action === "add-muscle"){
+      openModal("Add muscle group","Name a new muscle group.",`
+        <div class="tr-field">
+          <label class="tr-label">Name</label>
+          <input type="text" class="tr-input" data-modal-field="name" placeholder="e.g. Glutes" data-testid="modal-muscle-name" autofocus>
+        </div>
+      `, [
+        { id:"cancel", label:"Cancel" },
+        { id:"confirm", label:"Add", primary:true }
+      ]).then(res => {
+        if(res?.action === "confirm" && res.inputs.name?.trim()){
+          state.data.muscles.push({ id: uid(), name: res.inputs.name.trim(), exercises: [] });
+          save("muscles"); render();
+        }
+      });
+    }
+    else if(action === "add-muscle-ex"){ addMuscleExerciseFromInput(); }
+  }
+
+  function addMuscleExerciseFromInput(){
+    const input = document.querySelector("[data-muscle-ex-input]");
+    const val = (input?.value || "").trim();
+    if(!val) return;
+    const m = state.data.muscles.find(x => x.id === state.programsView.muscleId);
+    if(!m) return;
+    m.exercises.push({ id: uid(), name: val });
+    save("muscles"); render();
+    setTimeout(()=> { const i = document.querySelector("[data-muscle-ex-input]"); if(i) i.focus(); }, 40);
+  }
+
+  // ============ DRAG REORDER (press-and-hold) ============
+  function attachDragReorder(list){
+    const items = Array.from(list.querySelectorAll("[data-drag-idx]"));
+    if(!items.length) return;
+    const listType = list.dataset.dragList;
+
+    items.forEach(item => {
+      let holdTimer = null;
+      let dragging = false;
+      let startY = 0, startX = 0;
+      let placeholder = null;
+      let clone = null;
+      let currentIdx = Number(item.dataset.dragIdx);
+      let hasMoved = false;
+
+      const onPointerDown = (e) => {
+        if(e.target.closest("[data-remove-muscle], [data-remove-muscle-ex], [data-open-muscle]")) return;
+        if(e.pointerType === "mouse" && e.button !== 0) return;
+        hasMoved = false;
+        startY = e.clientY; startX = e.clientX;
+        holdTimer = setTimeout(() => {
+          startDrag(e);
+        }, 380);
+      };
+
+      const startDrag = (e) => {
+        dragging = true;
+        item.setPointerCapture?.(e.pointerId);
+        const rect = item.getBoundingClientRect();
+        placeholder = document.createElement("div");
+        placeholder.style.height = rect.height + "px";
+        placeholder.style.background = "var(--accent-soft, rgba(94,234,212,0.14))";
+        placeholder.style.borderRadius = "14px";
+        placeholder.style.border = "1px dashed var(--accent, #5eead4)";
+        placeholder.style.marginBottom = getComputedStyle(item).marginBottom;
+        item.parentNode.insertBefore(placeholder, item);
+        item.classList.add("dragging");
+        item.style.width = rect.width + "px";
+        item.style.position = "fixed";
+        item.style.zIndex = "9999";
+        item.style.left = rect.left + "px";
+        item.style.top = rect.top + "px";
+        item.style.pointerEvents = "none";
+        item.style.transform = "scale(1.03)";
+        item.style.boxShadow = "0 20px 40px rgba(0,0,0,0.5)";
+        if(navigator.vibrate) navigator.vibrate(15);
+      };
+
+      const onPointerMove = (e) => {
+        if(!dragging){
+          const dx = Math.abs(e.clientX - startX);
+          const dy = Math.abs(e.clientY - startY);
+          if(dx > 8 || dy > 8){ hasMoved = true; clearTimeout(holdTimer); }
+          return;
+        }
+        e.preventDefault();
+        const rect = item.getBoundingClientRect();
+        const dy = e.clientY - (rect.top + rect.height/2);
+        item.style.top = (parseFloat(item.style.top) + dy) + "px";
+        // Reorder placeholder
+        const siblings = Array.from(list.querySelectorAll("[data-drag-idx]")).filter(x => x !== item);
+        for(const sib of siblings){
+          const r = sib.getBoundingClientRect();
+          const mid = r.top + r.height/2;
+          if(e.clientY < mid){
+            list.insertBefore(placeholder, sib);
+            return;
+          }
+        }
+        list.appendChild(placeholder);
+      };
+
+      const onPointerUp = (e) => {
+        clearTimeout(holdTimer);
+        if(!dragging) return;
+        // Compute new order from placeholder position
+        const beforeItems = Array.from(list.querySelectorAll("[data-drag-idx], [data-placeholder]")).map(n => n === placeholder ? "PH" : Number(n.dataset.dragIdx));
+        // Insert item back at placeholder position, remove placeholder
+        placeholder.parentNode.replaceChild(item, placeholder);
+        item.classList.remove("dragging");
+        item.style.cssText = "";
+        dragging = false;
+
+        // Determine new order from DOM
+        const newOrderIdx = Array.from(list.querySelectorAll("[data-drag-idx]")).map(n => Number(n.dataset.dragIdx));
+        commitReorder(listType, newOrderIdx);
+      };
+
+      item.addEventListener("pointerdown", onPointerDown);
+      item.addEventListener("pointermove", onPointerMove);
+      item.addEventListener("pointerup", onPointerUp);
+      item.addEventListener("pointercancel", onPointerUp);
+      item.addEventListener("pointerleave", (e) => { if(!dragging) clearTimeout(holdTimer); });
+    });
+  }
+
+  function commitReorder(listType, newOrderIdx){
+    if(listType === "muscles"){
+      const original = state.data.muscles.slice();
+      state.data.muscles = newOrderIdx.map(i => original[i]);
+      save("muscles");
+    } else if(listType === "exercises"){
+      const m = state.data.muscles.find(x => x.id === state.programsView.muscleId);
+      if(m){
+        const original = m.exercises.slice();
+        m.exercises = newOrderIdx.map(i => original[i]);
+        save("muscles");
+      }
+    }
+    render();
   }
 
   function addBenchTip(){
@@ -1190,10 +1519,12 @@
     const x = (i) => pad + (points.length === 1 ? (W-2*pad)/2 : (i * (W-2*pad)/(points.length-1)));
     const y = (v) => H - pad - ((v - yMin) / Math.max(1, yMax - yMin)) * (H - 2*pad);
 
+    const accentHex = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#5eead4";
+    const rgb = getComputedStyle(document.documentElement).getPropertyValue("--accent-rgb").trim() || "94,234,212";
     // Gradient fill under line
     const grad = ctx.createLinearGradient(0,0,0,H);
-    grad.addColorStop(0, "rgba(94,234,212,0.35)");
-    grad.addColorStop(1, "rgba(94,234,212,0)");
+    grad.addColorStop(0, `rgba(${rgb},0.35)`);
+    grad.addColorStop(1, `rgba(${rgb},0)`);
 
     ctx.beginPath();
     points.forEach((p,i) => { if(i===0) ctx.moveTo(x(i), y(p.weight)); else ctx.lineTo(x(i), y(p.weight)); });
@@ -1206,7 +1537,7 @@
     // Line
     ctx.beginPath();
     points.forEach((p,i) => { if(i===0) ctx.moveTo(x(i), y(p.weight)); else ctx.lineTo(x(i), y(p.weight)); });
-    ctx.strokeStyle = "#5eead4";
+    ctx.strokeStyle = accentHex;
     ctx.lineWidth = 2.5;
     ctx.lineJoin = "round";
     ctx.stroke();
@@ -1215,7 +1546,7 @@
     points.forEach((p,i) => {
       ctx.beginPath();
       ctx.arc(x(i), y(p.weight), 4, 0, Math.PI*2);
-      ctx.fillStyle = "#5eead4";
+      ctx.fillStyle = accentHex;
       ctx.fill();
       ctx.beginPath();
       ctx.arc(x(i), y(p.weight), 4, 0, Math.PI*2);
@@ -1234,6 +1565,13 @@
 
   // ============ EXPORT ============
   window.Training = { render, state };
+
+  // Re-render on global accent change (updates charts + swatches)
+  window.addEventListener("accentchange", () => {
+    if(document.getElementById("trainingRoot") && document.querySelector('.page.active[data-page="training"], .page.active[data-page="fitness"]')){
+      render();
+    }
+  });
 
   // Initial render if training tab is active on load
   if(document.readyState === "complete" || document.readyState === "interactive"){
