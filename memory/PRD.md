@@ -31,17 +31,14 @@ Build a premium, dark, minimal Training tab inside the existing Life OS dashboar
 - **Calendar**: 52-week heatmap, streak (rest-day aware), monthly count, full history, tap-a-day → workout modal
 
 ### Global changes (this iteration)
-- **Accent color system**: 29 premium swatches, applied globally to every page (toggles, buttons, active states, Training charts, body map, badges). CSS vars derived automatically. Training re-renders charts on accent change.
-- **Lock screen (rewritten)**:
-  - Removed password/passcode UI completely
-  - Removed auto-lock timeout logic entirely
-  - Added WebAuthn Face ID / Touch ID registration flow
-  - Lock screen defaults to OFF (`lifeos_lock_required=false`)
-  - Full-screen layout: "Hello {name}" centered at top, app name centered in middle, big pill unlock button
-  - Only appears when Lock toggle is enabled AND Face ID is registered
-  - Enabling toggle prompts biometric registration; disabling clears credential
-- **Mobile-first**: viewport-meta preserved, min-heights ≥44px, safe-area-inset for iOS notch, stacked layouts on ≤640px, horizontally-scrollable tabs
-- **Pre-existing bug fix**: converted `saveGoals`/`saveTasks`/`saveEvents` wrapper pattern from function declarations to function expressions (previously caused Maximum call stack error via hoisting collision)
+- **Dashboard rewrite**: removed 11 legacy widgets (day streak, greeting widget, quick actions, clock, today widget, spotify, focus/pomo, mood, weight trend, calendar, standalone weather). New home order:
+  1. **Today's Command Centre** — accent-colored eyebrow, time-based greeting ("Good morning/afternoon/evening, {name}"), `HH:MM Weekday, DD Month` time+date, small weather chip, live alerts list (open goals, tasks, today's events → tap navigates)
+  2. **Daily Briefing** — expandable card, Groq prompt now generates 3 labelled sections (YESTERDAY / TODAY / NEWS covering politics/sports/finance) under 90 words
+  3. **Tasks** — clean card with progress ring + fraction + remaining count
+  4. **Status** — pages / minutes / connections snapshot
+  Old widget nodes retained hidden (aria-hidden, display:none) so legacy interval code (pomo/spotify/weather/mood) keeps operating without null-error explosions.
+- **Training Programs → Targets**: "Training Targets" renamed to just "Targets"; per-muscle sets/reps rows removed; replaced with two global inputs "Sets" (large numeric) then "Reps" (large numeric) that apply to all exercises. New localStorage key `tr_global_target_v1`. Split card and Targets card now `align-items:start` so they line up at the same top height on desktop.
+- **Year heatmap missed days**: empty (non-workout, non-rest, non-future) days now render a subtle "×" glyph instead of a blank cell; legend now includes "Missed" cell.
 
 ## Files
 - `/app/frontend/public/index.html` — main app (sidebar nav, CSS, accent system, lock screen, Settings)

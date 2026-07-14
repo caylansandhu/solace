@@ -1225,6 +1225,62 @@ body.light .notes-tb-btn{color:#555}
 }
 .command-result.show{display:block}
 
+/* ============ NEW DASHBOARD ============ */
+.dash-block{margin-bottom:16px}
+.dash-block:last-child{margin-bottom:0}
+.dash-cc{
+  padding:24px 20px 20px;border-radius:20px;
+  background:linear-gradient(160deg,var(--accent-15,rgba(255,255,255,0.05)) 0%,rgba(255,255,255,0.02) 55%,rgba(255,255,255,0.03) 100%);
+  border:1px solid rgba(255,255,255,0.06);
+  position:relative;overflow:hidden;
+}
+.dash-cc::after{
+  content:"";position:absolute;top:-60px;right:-60px;width:220px;height:220px;
+  background:radial-gradient(circle,var(--accent-15,rgba(255,255,255,0.06)) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.dash-cc-head{position:relative;z-index:1}
+.dash-cc-eyebrow{font-size:11px;font-weight:700;letter-spacing:0.14em;color:var(--accent);text-transform:uppercase}
+.dash-cc-greeting{font-size:32px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;color:#fff;margin-top:10px}
+.dash-cc-meta{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;font-size:14px;color:var(--text2)}
+.dash-cc-time{font-weight:700;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-0.01em}
+.dash-cc-date{font-weight:500}
+.dash-cc-weather{
+  display:inline-flex;align-items:center;gap:6px;margin-left:auto;
+  padding:5px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);
+  border-radius:100px;font-size:13px;color:var(--text2);font-weight:600;
+}
+.dash-cc-weather-ico{font-size:15px}
+.dash-cc-weather-temp{color:#fff}
+.dash-cc-alerts{margin-top:18px;display:flex;flex-direction:column;gap:8px;position:relative;z-index:1}
+.dash-cc-alerts-empty{font-size:13px;color:var(--text3);font-style:italic;padding:6px 0}
+.dash-cc-alert{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;cursor:pointer;transition:border-color 0.2s ease;
+  text-align:left;font-family:inherit;color:inherit;width:100%;
+}
+.dash-cc-alert:hover{border-color:rgba(255,255,255,0.12)}
+.dash-cc-alert-ico{
+  width:32px;height:32px;border-radius:10px;flex-shrink:0;
+  background:var(--accent-soft, rgba(255,255,255,0.08));color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;
+}
+.dash-cc-alert-body{flex:1;min-width:0}
+.dash-cc-alert-title{font-size:14px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dash-cc-alert-sub{font-size:12px;color:var(--text3);margin-top:2px}
+
+.dash-tasks-card{cursor:pointer;transition:border-color 0.2s ease}
+.dash-tasks-card:hover{border-color:rgba(255,255,255,0.12)}
+.tasks-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.tasks-ring-wrap{display:flex;align-items:center;gap:14px}
+.tasks-count{font-size:24px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
+
+@media (max-width:640px){
+  .dash-cc-greeting{font-size:28px}
+  .dash-cc-weather{margin-left:0}
+}
+
 /* ============ TRAINING TAB ============ */
 .training-root{
   --tr-accent:var(--accent, #5eead4);
@@ -1455,11 +1511,18 @@ body.light .notes-tb-btn{color:#555}
 .tr-heat-cell{
   width:13px;height:13px;border-radius:3px;background:var(--tr-surface-3);
   border:1px solid var(--tr-line);cursor:pointer;transition:transform 0.15s ease;
+  position:relative;display:flex;align-items:center;justify-content:center;
 }
 .tr-heat-cell:hover{transform:scale(1.3);border-color:var(--tr-accent)}
 .tr-heat-cell.done{background:var(--tr-accent);border-color:transparent;box-shadow:0 0 6px -2px var(--tr-accent-glow)}
 .tr-heat-cell.rest{background:rgba(255,255,255,0.08)}
 .tr-heat-cell.today{border:1.5px solid var(--tr-accent)}
+.tr-heat-cell.empty{background:transparent}
+.tr-heat-cell.future{cursor:default}
+.tr-heat-x{
+  font-size:11px;line-height:1;color:var(--tr-text-3);font-weight:400;
+  font-family:-apple-system,Inter,sans-serif;pointer-events:none;
+}
 
 /* Chart */
 .tr-chart{width:100%;height:180px;display:block}
@@ -1573,10 +1636,18 @@ body.light .notes-tb-btn{color:#555}
 }
 
 /* Split + Targets side-by-side */
-.tr-split-targets{display:grid;grid-template-columns:1.15fr 1fr;gap:12px}
-.tr-split-card, .tr-targets-card{min-width:0}
+.tr-split-targets{display:grid;grid-template-columns:1.15fr 1fr;gap:12px;align-items:start}
+.tr-split-card, .tr-targets-card{min-width:0;align-self:start}
 @media (max-width:640px){
   .tr-split-targets{grid-template-columns:1fr;gap:12px}
+}
+
+/* Global target inputs (Sets/Reps applied to all) */
+.tr-global-target{display:flex;flex-direction:column;gap:12px}
+.tr-global-target-field{display:flex;flex-direction:column;gap:6px}
+.tr-target-big{
+  font-size:20px;font-weight:700;text-align:center;padding:14px 12px;
+  font-variant-numeric:tabular-nums;letter-spacing:-0.01em;
 }
 
 /* Split days */
@@ -1673,177 +1744,115 @@ body.light .notes-tb-btn{color:#555}
 
     <div class="page active" id="page-dashboard" data-page="dashboard">
       <div class="dash-app-name" id="dashAppNameDisplay"></div>
-      <div class="dash-widgets">
-        <!-- Streak Counter -->
-        <div class="dash-widget dash-widget-full">
-          <div class="streak-counter" id="streakCounter">
-            <div class="streak-number" id="streakNumber">0</div>
-            <div class="streak-label">Day Streak · Goals, Sleep, Steps, Nutrition, Weight</div>
+
+      <!-- 1. Today's Command Centre -->
+      <div class="dash-block dash-cc">
+        <div class="dash-cc-head">
+          <div class="dash-cc-eyebrow">Today's Command Centre</div>
+          <h1 class="dash-cc-greeting" id="ccGreeting">Good morning</h1>
+          <div class="dash-cc-meta">
+            <span class="dash-cc-time" id="ccTime">--:--</span>
+            <span class="dash-cc-date" id="ccDate">--</span>
+            <span class="dash-cc-weather" id="ccWeather" title="Weather">
+              <span class="dash-cc-weather-ico" id="ccWeatherIco">◌</span>
+              <span class="dash-cc-weather-temp" id="ccWeatherTemp">--°</span>
+            </span>
           </div>
         </div>
-
-        <!-- AI Greeting -->
-        <div class="dash-widget dash-widget-full">
-          <div class="agent-greeting" id="dashGreeting">
-            <div class="agent-greeting-label">Good day, Sir</div>
-            <div class="agent-greeting-text" id="dashGreetingText">Initialising...</div>
-            <div style="display:flex;gap:8px;margin-top:12px">
-              <button type="button" class="tts-btn" id="dashGreetingTTS" title="Read aloud">🔊 Speak</button>
-              <button type="button" class="tts-btn" id="dashMuteTTS" title="Mute TTS">🔇 Mute</button>
-            </div>
-          </div>
+        <div class="dash-cc-alerts" id="ccAlerts">
+          <div class="dash-cc-alerts-empty">No alerts. Enjoy your day.</div>
         </div>
+      </div>
 
-        <!-- Daily Briefing -->
-        <div class="dash-widget dash-widget-wide">
-          <div class="briefing-card" id="dashBriefingCard">
-            <div class="briefing-header">
-              <div>
-                <div class="briefing-title">Daily Briefing</div>
-                <div class="briefing-sub">Tap to expand</div>
-              </div>
-              <span class="briefing-toggle" id="dashBriefingToggle">Open ▼</span>
-            </div>
-            <div class="briefing-body" id="dashBriefingBody">
-              <p>Generating briefing...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Command Centre -->
-        <div class="dash-widget dash-widget-wide">
-          <div class="dash-kicker">Today's command centre</div>
-          <div class="dash-focus-title" id="dashFocusTitle" style="margin-top:8px">Set your first priority.</div>
-          <p class="dash-focus-copy" id="dashFocusCopy" style="margin-top:8px">Add a goal, capture a note, or ask the assistant what to focus on next.</p>
-          <div class="todo-actions" style="margin-top:auto;padding-top:12px">
-            <button type="button" class="btn btn-primary" id="dashAddGoal">Add goal</button>
-            <button type="button" class="btn btn-ghost" id="dashOpenAI">Ask AI</button>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="dash-widget">
-          <div class="dash-widget-title">Quick actions</div>
-          <div class="quick-actions" style="margin-top:8px">
-            <button type="button" class="quick-card" data-go="todo"><strong>To Do</strong><span>Plan today</span></button>
-            <button type="button" class="quick-card" data-go="notes"><strong>Note</strong><span>Capture thought</span></button>
-            <button type="button" class="quick-card" data-go="brain"><strong>Brain</strong><span>View map</span></button>
-            <button type="button" class="quick-card" data-go="settings"><strong>Settings</strong><span>Tune app</span></button>
-          </div>
-        </div>
-
-        <div class="dash-widget">
-          <div class="dash-widget-title">Clock</div>
-          <div style="display:flex;align-items:baseline;margin-top:auto"><span class="dash-clock" id="dashClock">--:--</span><span class="dash-clock-ampm" id="dashClockAmpm">--</span></div>
-        </div>
-        <div class="dash-widget">
-          <div class="dash-widget-title">Weather</div>
-          <div class="dash-weather" id="dashWeather">
-            <span class="dash-weather-icon" id="dashWeatherIcon">🌤</span>
+      <!-- 2. Daily Briefing -->
+      <div class="dash-block">
+        <div class="briefing-card" id="dashBriefingCard">
+          <div class="briefing-header">
             <div>
-              <div class="dash-weather-temp" id="dashWeatherTemp">--°</div>
-              <div class="dash-weather-city" id="dashWeatherCity">Locating...</div>
-              <div class="dash-weather-cond" id="dashWeatherCond">--</div>
+              <div class="briefing-title">Daily Briefing</div>
+              <div class="briefing-sub">Yesterday · today · what matters to you</div>
             </div>
+            <span class="briefing-toggle" id="dashBriefingToggle">Open ▼</span>
+          </div>
+          <div class="briefing-body" id="dashBriefingBody">
+            <p>Generating briefing...</p>
           </div>
         </div>
-        <div class="dash-widget" style="cursor:pointer" id="dashTasksWidget">
-          <div class="dash-widget-title">Tasks</div>
-          <div style="display:flex;align-items:center;gap:12px;margin-top:auto">
-            <div class="dash-todo-ring" style="width:56px;height:56px;margin:0">
-              <canvas id="dashTodoRing" width="56" height="56"></canvas>
-              <div class="dash-todo-text" style="font-size:13px" id="dashTodoText">0/0</div>
-            </div>
+      </div>
+
+      <!-- 3. Tasks -->
+      <div class="dash-block">
+        <div class="card dash-tasks-card" id="dashTasksWidget" style="cursor:pointer">
+          <div class="tasks-head">
             <div>
-              <div style="font-size:22px;font-weight:700" id="dashTasksCount">0/0</div>
-              <div style="font-size:12px;color:var(--text3)" id="dashTasksLabel">done today</div>
+              <h2 style="margin:0">Tasks</h2>
+              <p class="subtitle" style="margin-top:4px" id="dashTasksLabel">done today</p>
             </div>
-          </div>
-        </div>
-        <div class="dash-widget dash-widget-wide">
-          <div class="dash-widget-title">Weight Trend</div>
-          <canvas class="dash-weight-canvas" id="dashWeightCanvas" width="300" height="50"></canvas>
-          <div class="dash-weight-row">
-            <span class="dash-weight-val" id="dashWeightVal">--</span>
-            <span class="dash-weight-change" id="dashWeightChange"></span>
-          </div>
-        </div>
-        <div class="dash-widget">
-          <div class="dash-widget-title">Mood</div>
-          <div class="dash-mood" id="dashMood">
-            <button type="button" class="dash-mood-btn" data-m="1">😢</button>
-            <button type="button" class="dash-mood-btn" data-m="2">😟</button>
-            <button type="button" class="dash-mood-btn" data-m="3">😐</button>
-            <button type="button" class="dash-mood-btn" data-m="4">🙂</button>
-            <button type="button" class="dash-mood-btn" data-m="5">😁</button>
-          </div>
-          <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:auto" id="dashMoodLabel">Log today's mood</div>
-        </div>
-        <div class="dash-widget">
-          <div class="dash-widget-title">Focus</div>
-          <div class="dash-pomo-time" id="dashPomoTime">25:00</div>
-          <div class="dash-pomo-btns">
-            <button type="button" class="btn btn-sm btn-primary" id="dashPomoStart">Start</button>
-            <button type="button" class="btn btn-sm btn-ghost" id="dashPomoReset">Reset</button>
-          </div>
-          <div class="dash-pomo-sessions" id="dashPomoSessions">0 sessions</div>
-        </div>
-        <div class="dash-widget dash-widget-wide">
-          <div class="dash-widget-title">Spotify</div>
-          <div class="dash-spotify" id="dashSpotify">
-            <div class="dash-spotify-art" id="dashSpotifyArt"><img src="" alt="" id="dashSpotifyImg" style="display:none"/></div>
-            <div class="dash-spotify-info">
-              <div class="dash-spotify-track" id="dashSpotifyTrack">Not connected</div>
-              <div class="dash-spotify-artist" id="dashSpotifyArtist">Tap to link Spotify</div>
-            </div>
-          </div>
-          <div style="margin-top:auto">
-            <button type="button" class="btn btn-sm btn-ghost" id="dashSpotifyConnect">Connect Spotify</button>
-          </div>
-        </div>
-        <div class="dash-widget dash-widget-wide">
-          <div style="display:flex;gap:16px;height:100%">
-            <div style="flex:1.4">
-              <div class="dash-widget-title">Calendar</div>
-              <div class="dash-cal-nav">
-                <button type="button" class="icon-btn" id="dashCalPrev">◀</button>
-                <span class="dash-cal-month" id="dashCalMonth">--</span>
-                <button type="button" class="icon-btn" id="dashCalNext">▶</button>
+            <div class="tasks-ring-wrap">
+              <div class="dash-todo-ring" style="width:64px;height:64px;margin:0">
+                <canvas id="dashTodoRing" width="64" height="64"></canvas>
+                <div class="dash-todo-text" style="font-size:14px" id="dashTodoText">0/0</div>
               </div>
-              <div class="dash-calendar" id="dashCalendar"></div>
-            </div>
-            <div style="flex:1;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,0.06);padding-left:14px">
-              <div class="dash-widget-title">Upcoming</div>
-              <div class="mini-list" id="dashUpcomingList" style="flex:1;overflow:auto;margin-top:8px"></div>
-              <button type="button" class="btn btn-sm btn-ghost" id="dashAddEvent" style="margin-top:8px">+ Add event</button>
+              <div class="tasks-count" id="dashTasksCount">0/0</div>
             </div>
           </div>
         </div>
       </div>
-      <div class="dash-section-grid">
-        <div class="card">
-          <h2>Today</h2>
-          <p class="subtitle" id="dashTodaySubtitle">Your active goals.</p>
-          <div class="mini-list" id="dashTodayList"></div>
-        </div>
+
+      <!-- 4. Status -->
+      <div class="dash-block">
         <div class="card">
           <h2>Status</h2>
           <p class="subtitle">Real-time system snapshot.</p>
-          <div class="dash-status-row" style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px">
-            <div style="flex:1;min-width:100px;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px">
+          <div class="dash-status-row" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:14px">
+            <div style="flex:1;min-width:96px;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px">
               <div style="font-size:24px;font-weight:700" id="statusPages">0</div>
               <div style="font-size:12px;color:var(--text3);margin-top:4px">pages</div>
             </div>
-            <div style="flex:1;min-width:100px;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px">
+            <div style="flex:1;min-width:96px;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px">
               <div style="font-size:24px;font-weight:700" id="statusMinutes">0</div>
               <div style="font-size:12px;color:var(--text3);margin-top:4px">minutes</div>
             </div>
-            <div style="flex:1;min-width:100px;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px">
+            <div style="flex:1;min-width:96px;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px">
               <div style="font-size:24px;font-weight:700" id="statusConnections">0</div>
               <div style="font-size:12px;color:var(--text3);margin-top:4px">connections</div>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Hidden legacy nodes kept so scripts don't break -->
+      <div class="dash-hidden-legacy" style="display:none" aria-hidden="true">
+        <div id="streakNumber">0</div>
+        <div id="dashGreeting"><div class="agent-greeting-label"></div><div id="dashGreetingText"></div></div>
+        <button id="dashGreetingTTS" type="button"></button>
+        <button id="dashMuteTTS" type="button"></button>
+        <div id="dashFocusTitle"></div>
+        <div id="dashFocusCopy"></div>
+        <button id="dashAddGoal" type="button"></button>
+        <button id="dashOpenAI" type="button"></button>
+        <span id="dashClock"></span>
+        <span id="dashClockAmpm"></span>
+        <div id="dashWeather"><span id="dashWeatherIcon"></span><div id="dashWeatherTemp"></div><div id="dashWeatherCity"></div><div id="dashWeatherCond"></div></div>
+        <canvas id="dashWeightCanvas" width="300" height="50"></canvas>
+        <span id="dashWeightVal"></span>
+        <span id="dashWeightChange"></span>
+        <div id="dashMood"><button class="dash-mood-btn" data-m="1"></button><button class="dash-mood-btn" data-m="2"></button><button class="dash-mood-btn" data-m="3"></button><button class="dash-mood-btn" data-m="4"></button><button class="dash-mood-btn" data-m="5"></button></div>
+        <div id="dashMoodLabel"></div>
+        <div id="dashPomoTime">25:00</div>
+        <button id="dashPomoStart" type="button"></button>
+        <button id="dashPomoReset" type="button"></button>
+        <div id="dashPomoSessions"></div>
+        <div id="dashSpotify"><div id="dashSpotifyArt"><img id="dashSpotifyImg" style="display:none" alt=""/></div><div id="dashSpotifyTrack"></div><div id="dashSpotifyArtist"></div></div>
+        <button id="dashSpotifyConnect" type="button"></button>
+        <button id="dashCalPrev" type="button"></button>
+        <span id="dashCalMonth"></span>
+        <button id="dashCalNext" type="button"></button>
+        <div id="dashCalendar"></div>
+        <div id="dashUpcomingList"></div>
+        <button id="dashAddEvent" type="button"></button>
+        <div id="dashTodayList"></div>
+        <div id="dashTodaySubtitle"></div>
       </div>
     </div>
     <div class="page" id="page-todo" data-page="todo">
@@ -2812,56 +2821,132 @@ function renderDashboard(){
   const notes=notesList();
   const chats=readJSON("lifeos_chat_sessions",[]);
   const streak=streakData().count||0;
-  $("dashFocusTitle").textContent=firstOpen?firstOpen.text:"You are clear for now.";
-  $("dashFocusCopy").textContent=firstOpen
+  // Legacy references guarded
+  const focusTitle=$("dashFocusTitle");if(focusTitle)focusTitle.textContent=firstOpen?firstOpen.text:"You are clear for now.";
+  const focusCopy=$("dashFocusCopy");if(focusCopy)focusCopy.textContent=firstOpen
     ? "Make this the next visible win. Keep it small, specific, and finishable."
     : "Add a goal for today or use the space to capture notes and plan what matters next.";
-  $("dashTodaySubtitle").textContent=goals.length?`${done} of ${goals.length} goals complete.`:"No goals yet. Add one to start the day.";
-  const list=$("dashTodayList");list.innerHTML="";
-  goals.slice(0,5).forEach(g=>{
-    const item=document.createElement("div");
-    item.className="mini-item"+(g.done?" done":"");
-    item.innerHTML=`<span class="mini-dot"></span><span>${escapeHtml(g.text)}</span>`;
-    list.appendChild(item);
-  });
-  if(!goals.length){
-    const item=document.createElement("div");
-    item.className="mini-item";
-    item.innerHTML='<span class="mini-dot"></span><span>No goals added yet.</span>';
-    list.appendChild(item);
+  const todaySub=$("dashTodaySubtitle");if(todaySub)todaySub.textContent=goals.length?`${done} of ${goals.length} goals complete.`:"No goals yet. Add one to start the day.";
+  const list=$("dashTodayList");
+  if(list){
+    list.innerHTML="";
+    goals.slice(0,5).forEach(g=>{
+      const item=document.createElement("div");
+      item.className="mini-item"+(g.done?" done":"");
+      item.innerHTML=`<span class="mini-dot"></span><span>${escapeHtml(g.text)}</span>`;
+      list.appendChild(item);
+    });
   }
+  renderCommandCentre();
   renderDashWidgets();
+  if(typeof renderBriefing === "function") renderBriefing();
+}
+
+function ccGreeting(){
+  const h=new Date().getHours();const n=readRaw("profile_name")||"there";
+  if(h<12)return`Good morning, ${n}`;
+  if(h<17)return`Good afternoon, ${n}`;
+  return`Good evening, ${n}`;
+}
+
+function renderCommandCentre(){
+  const g=$("ccGreeting");if(g)g.textContent=ccGreeting();
+  updateCCTimeDate();
+  renderCCAlerts();
+}
+
+function updateCCTimeDate(){
+  const t=$("ccTime");const d=$("ccDate");
+  const now=new Date();
+  if(t){
+    const h=String(now.getHours()).padStart(2,"0");
+    const m=String(now.getMinutes()).padStart(2,"0");
+    t.textContent=`${h}:${m}`;
+  }
+  if(d){
+    const weekday=now.toLocaleDateString("en-GB",{weekday:"long"});
+    const dayMonth=now.toLocaleDateString("en-GB",{day:"numeric",month:"long"});
+    d.textContent=`${weekday}, ${dayMonth}`;
+  }
+}
+
+function renderCCAlerts(){
+  const wrap=$("ccAlerts");if(!wrap)return;
+  const now=new Date();
+  const todayKey=dateKey(now);
+  const alerts=[];
+  // Goals still open
+  const {goals}=loadGoalsFor(now);
+  const openGoals=goals.filter(g=>!g.done);
+  if(openGoals.length){
+    alerts.push({
+      ico:"◎",title:`${openGoals.length} ${openGoals.length===1?"goal":"goals"} remaining today`,
+      sub:openGoals[0].text+(openGoals.length>1?` +${openGoals.length-1} more`:""),
+      go:"todo"
+    });
+  }
+  // Tasks still open
+  const {tasks}=loadTasksFor(now);
+  const openTasks=tasks.filter(t=>!t.done);
+  if(openTasks.length){
+    alerts.push({
+      ico:"✓",title:`${openTasks.length} ${openTasks.length===1?"task":"tasks"} to complete`,
+      sub:openTasks[0].text+(openTasks.length>1?` +${openTasks.length-1} more`:""),
+      go:"tasks"
+    });
+  }
+  // Today's events
+  const events=loadEvents().filter(e=>e.date===todayKey);
+  events.slice(0,3).forEach(e=>{
+    alerts.push({ico:"▤",title:e.title||"Event",sub:e.time||"Today",go:"dashboard"});
+  });
+  if(!alerts.length){
+    wrap.innerHTML='<div class="dash-cc-alerts-empty">No alerts. Enjoy your day.</div>';
+    return;
+  }
+  wrap.innerHTML=alerts.map(a=>`
+    <button type="button" class="dash-cc-alert" data-go="${a.go}" data-testid="cc-alert">
+      <span class="dash-cc-alert-ico">${a.ico}</span>
+      <span class="dash-cc-alert-body">
+        <span class="dash-cc-alert-title">${escapeHtml(a.title)}</span>
+        <span class="dash-cc-alert-sub">${escapeHtml(a.sub)}</span>
+      </span>
+    </button>
+  `).join("");
+  wrap.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
 }
 
 function renderDashWidgets(){
   // Tasks ring
   const {tasks}=loadTasksFor(today);
   const done=tasks.filter(t=>t.done).length;const total=tasks.length;
-  $("dashTodoText").textContent=total?`${done}/${total}`:"0/0";
-  $("dashTasksCount").textContent=total?`${done}/${total}`:"0/0";
-  $("dashTasksLabel").textContent=total?`${total-done} remaining`:"No tasks today";
+  const todoText=$("dashTodoText");if(todoText)todoText.textContent=total?`${done}/${total}`:"0/0";
+  const tasksCount=$("dashTasksCount");if(tasksCount)tasksCount.textContent=total?`${done}/${total}`:"0/0";
+  const tasksLabel=$("dashTasksLabel");if(tasksLabel)tasksLabel.textContent=total?`${total-done} remaining today`:"No tasks today";
   const cvs=$("dashTodoRing");if(cvs){const ctx=cvs.getContext("2d"),w=cvs.width,h=cvs.height,r=w/2,pct=total?done/total:0;
     ctx.clearRect(0,0,w,h);ctx.beginPath();ctx.arc(r,r,r-6,0,Math.PI*2);ctx.strokeStyle="rgba(255,255,255,0.08)";ctx.lineWidth=5;ctx.stroke();
     if(pct>0){ctx.beginPath();ctx.arc(r,r,r-6,-Math.PI/2,-Math.PI/2+Math.PI*2*pct);ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||"#a78bfa";ctx.lineWidth=5;ctx.lineCap="round";ctx.stroke();}
   }
-  // Weight sparkline
-  const health=readJSON("health_data",{});const wData=health.weight||[];
-  const wc=$("dashWeightCanvas");if(wc)drawSparkline(wc,wData);
-  if(wData.length){$("dashWeightVal").textContent=wData[wData.length-1].weight.toFixed(1)+"kg";const weekAgo=wData.slice(-8, -1).reduce((s,x,i,a)=>a.length>0?s+x.weight:0,0)/(Math.min(wData.length-1,7)||1);const change=wData[wData.length-1].weight-(weekAgo||wData[wData.length-1].weight);
-    const el=$("dashWeightChange");el.textContent=(change>0?"▲ ":"▼ ")+Math.abs(change).toFixed(1)+"kg this week";
-    el.className="dash-weight-change"+(change>0?" dash-weight-up":" dash-weight-down");
-  }else{$("dashWeightVal").textContent="--";$("dashWeightChange").textContent="";}
-  // Mood
-  const mood=readJSON("lifeos_mood",{});const todayMood=mood[dateKey(today)];
-  document.querySelectorAll(".dash-mood-btn").forEach(b=>b.classList.toggle("on",todayMood&&b.dataset.m===String(todayMood)));
-  $("dashMoodLabel").textContent=todayMood?["Terrible","Low","Okay","Good","Excellent"][todayMood-1]:"Log today's mood";
-  // Pomodoro
+  // Legacy widgets (kept hidden but functions guarded)
+  const wc=$("dashWeightCanvas");if(wc){
+    const health=readJSON("health_data",{});const wData=health.weight||[];
+    drawSparkline(wc,wData);
+    const valEl=$("dashWeightVal");const chgEl=$("dashWeightChange");
+    if(wData.length&&valEl){valEl.textContent=wData[wData.length-1].weight.toFixed(1)+"kg";const weekAgo=wData.slice(-8, -1).reduce((s,x,i,a)=>a.length>0?s+x.weight:0,0)/(Math.min(wData.length-1,7)||1);const change=wData[wData.length-1].weight-(weekAgo||wData[wData.length-1].weight);
+      if(chgEl){chgEl.textContent=(change>0?"▲ ":"▼ ")+Math.abs(change).toFixed(1)+"kg this week";chgEl.className="dash-weight-change"+(change>0?" dash-weight-up":" dash-weight-down");}
+    }else if(valEl){valEl.textContent="--";if(chgEl)chgEl.textContent="";}
+  }
+  // Mood / pomo / calendar / upcoming legacy elements are inside hidden div — skip if not visible
+  if(document.getElementById("dashMood") && document.getElementById("dashMood").offsetParent){
+    const mood=readJSON("lifeos_mood",{});const todayMood=mood[dateKey(today)];
+    document.querySelectorAll(".dash-mood-btn").forEach(b=>b.classList.toggle("on",todayMood&&b.dataset.m===String(todayMood)));
+    const ml=$("dashMoodLabel");if(ml)ml.textContent=todayMood?["Terrible","Low","Okay","Good","Excellent"][todayMood-1]:"Log today's mood";
+  }
   const pomo=readJSON("lifeos_pomo",{timeLeft:1500,active:false,sessions:0});
-  $("dashPomoTime").textContent=fmtTime(pomo.timeLeft||1500);$("dashPomoSessions").textContent=(pomo.sessions||0)+" sessions";
-  // Calendar
-  renderDashCalendar();
-  // Upcoming
-  renderUpcoming();
+  const pt=$("dashPomoTime");if(pt)pt.textContent=fmtTime(pomo.timeLeft||1500);
+  const ps=$("dashPomoSessions");if(ps)ps.textContent=(pomo.sessions||0)+" sessions";
+  if($("dashCalendar"))renderDashCalendar();
+  if($("dashUpcomingList"))renderUpcoming();
 }
 function fmtTime(s){const m=Math.floor(s/60),sec=s%60;return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;}
 
@@ -2897,22 +2982,33 @@ function renderDashCalendar(){
 
 function updateClock(){
   const now=new Date();const h=now.getHours();const m=now.getMinutes();const ampm=h>=12?"PM":"AM";
-  const hh=h%12||12;$("dashClock").textContent=`${String(hh).padStart(2,"0")}:${String(m).padStart(2,"0")}`;$("dashClockAmpm").textContent=ampm;
-  $("greeting").textContent=greeting();$("dateLabel").textContent=fmtDate(now);
+  const hh=h%12||12;
+  const dc=$("dashClock");if(dc)dc.textContent=`${String(hh).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+  const dca=$("dashClockAmpm");if(dca)dca.textContent=ampm;
+  const gEl=$("greeting");if(gEl)gEl.textContent=greeting();
+  const dl=$("dateLabel");if(dl)dl.textContent=fmtDate(now);
+  updateCCTimeDate();
 }
 
 function fetchWeather(){
-  if(!navigator.geolocation){$("dashWeatherCity").textContent="Location unavailable";return;}
+  if(!navigator.geolocation){const c=$("dashWeatherCity");if(c)c.textContent="Location unavailable";return;}
   navigator.geolocation.getCurrentPosition(async pos=>{
     try{
       const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.coords.latitude.toFixed(2)}&longitude=${pos.coords.longitude.toFixed(2)}&current_weather=true`);
       const d=await res.json();
-      const w=d.current_weather;$("dashWeatherTemp").textContent=Math.round(w.temperature)+"°";$("dashWeatherCond").textContent=w.weathercode===0?"Clear":w.weathercode<4?"Partly cloudy":w.weathercode<50?"Overcast":w.weathercode<70?"Rain":w.weathercode<80?"Snow":w.weathercode<90?"Showers":"Thunderstorm";
-      $("dashWeatherIcon").textContent=w.weathercode===0?"☀️":w.weathercode<4?"🌤":w.weathercode<50?"☁️":w.weathercode<70?"🌧":w.weathercode<80?"❄️":w.weathercode<90?"🌦":"⛈";
-      // Reverse geocode for city via free API
-      try{const gc=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=en`);const g=await gc.json();$("dashWeatherCity").textContent=g.city||g.locality||"Local";}catch(e){$("dashWeatherCity").textContent="Local";}
-    }catch(e){$("dashWeatherCity").textContent="Unavailable";}
-  },()=>{$("dashWeatherCity").textContent="Permission denied";},{timeout:10000});
+      const w=d.current_weather;
+      const temp=Math.round(w.temperature);
+      const cond=w.weathercode===0?"Clear":w.weathercode<4?"Partly cloudy":w.weathercode<50?"Overcast":w.weathercode<70?"Rain":w.weathercode<80?"Snow":w.weathercode<90?"Showers":"Thunderstorm";
+      const ico=w.weathercode===0?"☀":w.weathercode<4?"⛅":w.weathercode<50?"☁":w.weathercode<70?"☂":w.weathercode<80?"❄":w.weathercode<90?"☂":"⛈";
+      const wt=$("dashWeatherTemp");if(wt)wt.textContent=temp+"°";
+      const wc=$("dashWeatherCond");if(wc)wc.textContent=cond;
+      const wi=$("dashWeatherIcon");if(wi)wi.textContent=ico;
+      // Command Centre weather chip
+      const cct=$("ccWeatherTemp");if(cct)cct.textContent=temp+"°";
+      const cci=$("ccWeatherIco");if(cci)cci.textContent=ico;
+      try{const gc=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&localityLanguage=en`);const g=await gc.json();const wcy=$("dashWeatherCity");if(wcy)wcy.textContent=g.city||g.locality||"Local";}catch(e){const wcy=$("dashWeatherCity");if(wcy)wcy.textContent="Local";}
+    }catch(e){const wcy=$("dashWeatherCity");if(wcy)wcy.textContent="Unavailable";}
+  },()=>{const wcy=$("dashWeatherCity");if(wcy)wcy.textContent="Permission denied";},{timeout:10000});
   cacheWeatherForGreeting();
 }
 function cacheWeatherForGreeting(){
@@ -4340,14 +4436,17 @@ async function generateBriefing(){
   const firstGoal=goals.find(g=>!g.done);
   const health=readJSON("health_data",{});
   const weights=health.weight||[];
-  const prompt=`You are Jarvis. Write a concise personal daily briefing for ${profileName()}. Address as "Sir".
+  const prompt=`You are Jarvis. Write a personal daily briefing for ${profileName()}. Address as "Sir".
 
-Yesterday: ${yGoals.length} goals (${yGoals.filter(g=>g.done).length} done), ${yTasks.length} tasks (${yTasks.filter(t=>t.done).length} done).
-Today weather: ${weather.temp||"--"}° ${weather.cond||""}.
-Today goal: ${firstGoal?firstGoal.text:"none set"}.
-Weight trend: ${weights.length>=2?(weights[weights.length-1].weight-weights[0].weight).toFixed(1)+"kg change":"insufficient data"}.
+YESTERDAY (${yKey}): ${yGoals.length} goals (${yGoals.filter(g=>g.done).length} done), ${yTasks.length} tasks (${yTasks.filter(t=>t.done).length} done).
+TODAY (${todayKey}) weather: ${weather.temp||"--"}° ${weather.cond||""}. Priority goal: ${firstGoal?firstGoal.text:"none set"}. Weight trend: ${weights.length>=2?(weights[weights.length-1].weight-weights[0].weight).toFixed(1)+"kg change":"insufficient data"}.
 
-Return a 2-3 sentence briefing. No emojis. Tone: composed, premium.`;
+Structure the briefing in three short sections using these exact labels on their own lines:
+YESTERDAY: one sentence recapping the previous day.
+TODAY: one sentence on what matters now and the focus goal.
+NEWS: one sentence covering the most relevant topic across politics, sports, or finance that a mature UK-based reader would care about (use general knowledge; be neutral).
+
+Keep total under 90 words. No emojis. Tone: composed, premium, direct.`;
   try{
     const res=await groqChat([{role:"user",content:prompt}]);
     const text=res.trim();

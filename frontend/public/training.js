@@ -24,6 +24,7 @@
     muscles: "tr_muscles_v1",
     split: "tr_split_v1",
     targets: "tr_targets_v1",
+    globalTarget: "tr_global_target_v1",
   };
 
   const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
@@ -62,6 +63,7 @@
       muscles: read(KEYS.muscles, defaultMuscles()),
       split: read(KEYS.split, defaultSplit()),
       targets: read(KEYS.targets, defaultTargets()),
+      globalTarget: read(KEYS.globalTarget, { sets:"", reps:"" }),
     },
   };
   // Ensure split has all days (backward compat)
@@ -681,7 +683,7 @@
   function renderProgramList(){
     const muscles = state.data.muscles;
     const split = state.data.split;
-    const targets = state.data.targets;
+    const gt = state.data.globalTarget || { sets:"", reps:"" };
     return `
       <div class="tr-split-targets">
         <div class="tr-card tr-split-card">
@@ -692,10 +694,17 @@
           </div>
         </div>
         <div class="tr-card tr-targets-card">
-          <div class="tr-card-title">Training Targets</div>
-          <p style="font-size:12px;color:var(--tr-text-3);margin-bottom:10px">Sets × reps goals per muscle for overload.</p>
-          <div data-testid="targets-list">
-            ${muscles.map(m => renderTargetRow(m, targets[m.id])).join("")}
+          <div class="tr-card-title">Targets</div>
+          <p style="font-size:12px;color:var(--tr-text-3);margin-bottom:14px">Sets & reps applied to all exercises for progressive overload.</p>
+          <div class="tr-global-target">
+            <div class="tr-global-target-field">
+              <label class="tr-label" for="tr-target-sets">Sets</label>
+              <input type="number" min="0" id="tr-target-sets" class="tr-input tr-target-big" placeholder="e.g. 2" value="${gt.sets??""}" data-global-target="sets" data-testid="global-target-sets" inputmode="numeric">
+            </div>
+            <div class="tr-global-target-field">
+              <label class="tr-label" for="tr-target-reps">Reps</label>
+              <input type="number" min="0" id="tr-target-reps" class="tr-input tr-target-big" placeholder="e.g. 8" value="${gt.reps??""}" data-global-target="reps" data-testid="global-target-reps" inputmode="numeric">
+            </div>
           </div>
         </div>
       </div>
@@ -898,14 +907,14 @@
         <div class="tr-card-title">Year heatmap</div>
         <div class="tr-heatmap" data-testid="heatmap">
           ${weeks.map(week => `<div class="tr-heatmap-week">${week.map(d => {
-            if(d.isFuture) return `<div class="tr-heat-cell" style="opacity:0.35" title="${d.iso}"></div>`;
-            const cls = d.isDone?"done":d.isRest?"rest":"";
-            const today0 = d.isToday?"today":"";
-            return `<div class="tr-heat-cell ${cls} ${today0}" data-day-cell="${d.iso}" title="${d.iso}${d.isDone?" · Trained":""}"></div>`;
+            if(d.isFuture) return `<div class="tr-heat-cell future" style="opacity:0.35" title="${d.iso}"></div>`;
+            if(d.isDone) return `<div class="tr-heat-cell done ${d.isToday?"today":""}" data-day-cell="${d.iso}" title="${d.iso} · Trained"></div>`;
+            if(d.isRest) return `<div class="tr-heat-cell rest ${d.isToday?"today":""}" data-day-cell="${d.iso}" title="${d.iso} · Rest"></div>`;
+            return `<div class="tr-heat-cell empty ${d.isToday?"today":""}" data-day-cell="${d.iso}" title="${d.iso} · No workout"><span class="tr-heat-x">×</span></div>`;
           }).join("")}</div>`).join("")}
         </div>
         <div class="tr-flex tr-mt" style="font-size:11px;color:var(--tr-text-3);gap:12px;flex-wrap:wrap">
-          <div class="tr-flex" style="gap:6px"><div class="tr-heat-cell"></div> None</div>
+          <div class="tr-flex" style="gap:6px"><div class="tr-heat-cell empty"><span class="tr-heat-x">×</span></div> Missed</div>
           <div class="tr-flex" style="gap:6px"><div class="tr-heat-cell rest"></div> Rest</div>
           <div class="tr-flex" style="gap:6px"><div class="tr-heat-cell done"></div> Trained</div>
         </div>
@@ -1098,7 +1107,15 @@
         }
       });
     }));
-    // Target inputs
+    // Global target inputs (Sets/Reps applied to all)
+    root.querySelectorAll("[data-global-target]").forEach(inp => inp.addEventListener("input", (e) => {
+      const field = e.target.dataset.globalTarget;
+      const val = e.target.value === "" ? "" : Number(e.target.value);
+      if(!state.data.globalTarget) state.data.globalTarget = { sets:"", reps:"" };
+      state.data.globalTarget[field] = val;
+      save("globalTarget");
+    }));
+    // Legacy per-muscle target inputs (no longer rendered, kept guard)
     root.querySelectorAll("[data-target]").forEach(inp => inp.addEventListener("input", (e) => {
       const id = e.target.dataset.target;
       const field = e.target.dataset.field;
