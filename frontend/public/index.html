@@ -1890,39 +1890,6 @@ body.light .notes-tb-btn{color:#555}
     <div class="page" id="page-nutrition" data-page="nutrition"><div class="page-block"><h2 class="page-heading">Nutrition</h2><p class="placeholder">Track your meals and macros here.</p></div></div>
     <div class="page" id="page-skills" data-page="skills"><div class="page-block"><h2 class="page-heading">Skills</h2><p class="placeholder">Track skills you are learning and developing here.</p></div></div>
     <div class="page" id="page-habits" data-page="habits"><div class="page-block"><h2 class="page-heading">Habits</h2><p class="placeholder">Build and track your daily habits here.</p></div></div>
-    <div class="page" id="page-notes" data-page="notes">
-      <div class="notes-app">
-        <aside class="notes-sidebar">
-          <div class="notes-sidebar-top">
-            <button type="button" class="btn btn-sm btn-primary" id="notesNewPage">+ Page</button>
-            <button type="button" class="btn btn-sm btn-ghost" id="notesNewFolder">+ Folder</button>
-          </div>
-          <div class="notes-tree" id="notesTree"></div>
-        </aside>
-        <main class="notes-editor" id="notesEditorWrap">
-          <div class="notes-toolbar" id="notesToolbar">
-            <button type="button" class="notes-tb-btn" data-cmd="bold" title="Bold"><b>B</b></button>
-            <button type="button" class="notes-tb-btn" data-cmd="italic" title="Italic"><i>I</i></button>
-            <button type="button" class="notes-tb-btn" data-cmd="underline" title="Underline"><u>U</u></button>
-            <span class="notes-tb-sep"></span>
-            <button type="button" class="notes-tb-btn" data-cmd="formatBlock" data-val="H1" title="Heading 1">H1</button>
-            <button type="button" class="notes-tb-btn" data-cmd="formatBlock" data-val="H2" title="Heading 2">H2</button>
-            <button type="button" class="notes-tb-btn" data-cmd="formatBlock" data-val="H3" title="Heading 3">H3</button>
-            <span class="notes-tb-sep"></span>
-            <button type="button" class="notes-tb-btn" data-cmd="insertUnorderedList" title="Bullet list">•</button>
-            <button type="button" class="notes-tb-btn" data-cmd="insertOrderedList" title="Numbered list">1.</button>
-            <span class="notes-tb-sep"></span>
-            <select class="notes-tb-select" id="notesFontSize" title="Font size">
-              <option value="1">Small</option>
-              <option value="3" selected>Normal</option>
-              <option value="5">Large</option>
-            </select>
-          </div>
-          <input type="text" class="notes-title" id="notesTitle" placeholder="Untitled page" autocomplete="off" />
-          <div class="notes-body" id="notesBody" contenteditable="true"></div>
-        </main>
-      </div>
-    </div>
     <div class="page" id="page-tasks" data-page="tasks">
       <div class="card">
         <div class="todo-header">
@@ -2260,17 +2227,16 @@ const NAV=[
   {section:"OVERVIEW",items:[
     {id:"dashboard",label:"Dashboard",dot:"#a78bfa"},
     {id:"tasks",label:"Tasks",dot:"#34d399"},
-    {id:"plan",label:"Plan",dot:"#34d399"},
-    {id:"goals",label:"Goals",dot:"#f472b6"}]},
+    {id:"plan",label:"Plan",dot:"#34d399"}]},
   {section:"HEALTH",items:[
     {id:"training",label:"Training",dot:"var(--accent)"},
     {id:"weight",label:"Weight",dot:"#f472b6"},
     {id:"sleep",label:"Sleep",dot:"#38bdf8"},
     {id:"nutrition",label:"Nutrition",dot:"#34d399"}]},
-  {section:"SKILLS",items:[{id:"skills",label:"Skills",dot:"#c084fc"}]},
   {section:"LIFE",items:[
     {id:"habits",label:"Habits",dot:"#fb923c"},
-    {id:"notes",label:"Notes",dot:"#f472b6"}]},
+    {id:"skills",label:"Skills",dot:"#c084fc"},
+    {id:"goals",label:"Goals",dot:"#f472b6"}]},
   {section:"INTELLIGENCE",items:[
     {id:"brain",label:"Neural Brain",dot:"#e5e7eb"},
     {id:"command",label:"Command Centre",dot:"#a78bfa"},
@@ -2279,7 +2245,7 @@ const NAV=[
     {id:"profile",label:"Profile",dot:"#8b5cf6"},
     {id:"settings",label:"Settings",dot:"#6b7280"}]}
 ];
-const TITLES={dashboard:"Dashboard",tasks:"Tasks",todo:"To Do List",plan:"Plan",goals:"Goals",training:"Training",fitness:"Training",weight:"Weight",sleep:"Sleep",nutrition:"Nutrition",skills:"Skills",habits:"Habits",notes:"Notes",brain:"Neural Brain",ai:"Insights",profile:"Profile",settings:"Settings",command:"Command Centre"};
+const TITLES={dashboard:"Dashboard",tasks:"Tasks",todo:"To Do List",plan:"Plan",goals:"Goals",training:"Training",fitness:"Training",weight:"Weight",sleep:"Sleep",nutrition:"Nutrition",skills:"Skills",habits:"Habits",brain:"Neural Brain",ai:"Insights",profile:"Profile",settings:"Settings",command:"Command Centre"};
 
 let currentPage="dashboard";
 
@@ -3260,7 +3226,8 @@ const NotesApp=(function(){
     const selItem=findItem(selId);if(selItem){updateContent(selId,body.innerHTML);}
   }
   function bind(){
-    $("notesNewPage").addEventListener("click",()=>createItem("page",selId?findItem(selId)?.parentId:null));
+    const np=$("notesNewPage");if(!np)return;
+    np.addEventListener("click",()=>createItem("page",selId?findItem(selId)?.parentId:null));
     $("notesNewFolder").addEventListener("click",()=>createItem("folder",selId?findItem(selId)?.parentId:null));
     $("notesTitle").addEventListener("input",()=>{if(selId){updateTitle(selId,$("notesTitle").value);renderTree();}});
     $("notesBody").addEventListener("input",()=>{if(selId){updateContent(selId,$("notesBody").innerHTML);}});
