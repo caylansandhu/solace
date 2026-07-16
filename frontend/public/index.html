@@ -2194,10 +2194,6 @@ body.light .notes-tb-btn{color:#555}
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>
     Home
   </button>
-  <button type="button" class="bottom-nav-btn" id="navBrain" aria-label="Neural Brain">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/><circle cx="12" cy="12" r="3"/></svg>
-    Brain
-  </button>
   <button type="button" class="bottom-nav-btn" id="navCommand" aria-label="Command Centre">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
     Command
@@ -2259,9 +2255,8 @@ function _origShowPage(id){
   document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
   $("pageTitle").textContent=TITLES[id]||id;
   $("greeting").textContent=greeting();
-  const home=$("navHome"), navB=$("navBrain"), navC=$("navCommand");
+  const home=$("navHome"), navC=$("navCommand");
   if(home)home.classList.toggle("active",id==="dashboard");
-  if(navB)navB.classList.toggle("active",id==="brain");
   if(navC)navC.classList.toggle("active",id==="command");
   window.scrollTo(0,0);
   if(id==="brain"){Brain.resize();}
@@ -4855,9 +4850,8 @@ function showPage(id){
   document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
   $("pageTitle").textContent=TITLES[id]||id;
   $("greeting").textContent=greeting();
-  const home=$("navHome"), navB=$("navBrain"), navC=$("navCommand");
+  const home=$("navHome"), navC=$("navCommand");
   if(home)home.classList.toggle("active",id==="dashboard");
-  if(navB)navB.classList.toggle("active",id==="brain");
   if(navC)navC.classList.toggle("active",id==="command");
   window.scrollTo(0,0);
   if(id==="brain"){Brain.resize();}
@@ -4986,7 +4980,6 @@ function init(){
   $("hamburger").addEventListener("click",()=>{haptic("light");openSidebar(!$("sidebar").classList.contains("open"));});
   $("overlay").addEventListener("click",()=>openSidebar(false));
   $("navHome").addEventListener("click",()=>{showPage("dashboard");openSidebar(false);});
-  $("navBrain").addEventListener("click",()=>{showPage("brain");openSidebar(false);});
   $("navCommand").addEventListener("click",()=>{showPage("command");openSidebar(false);});
   bindTodo(); bindInsights(); bindProfile(); bindSettings(); bindDashboard(); bindDashWidgets(); bindTasks(); bindEvents(); Brain.bind(); NotesApp.bind(); CommandCentre.bind();
   applyProfileToUI(); refreshProfileStats();
